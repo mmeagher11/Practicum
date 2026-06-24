@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "oss-diagnostic",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NonInteractive", "-File", "%TEMP%\\oss-server.ps1"],
+      "port": 8765
+    }
+  ]
+}
