@@ -2,13 +2,13 @@
   {
     "areaId": 1,
     "area": "Internal Ownership",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-07-03",
     "understand": {
       "plain": "Without a named owner, OSS governance defaults to whoever made the last decision or, more often, to no one at all. Accountability gaps create blind spots in security response, licence compliance, and regulatory readiness.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
         "appliesToRoles": ["distributor"],
-        "plain": "The CRA requires manufacturers of products with digital elements to have identifiable responsible persons for security and compliance matters. Undefined ownership is a structural gap against this expectation.",
+        "plain": "The CRA requires manufacturers of products with digital elements to operate defined vulnerability handling and compliance processes. Those processes presuppose clear internal responsibility; undefined ownership is a structural gap against that expectation.",
         "boundary": "Signpost only. This does not decide whether the CRA applies to you. Confirm with a qualified specialist."
       }
     },
@@ -119,25 +119,26 @@
   {
     "areaId": 6,
     "area": "Regulatory Readiness",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-07-03",
     "understand": {
       "plain": "EU instruments including the Cyber Resilience Act and the NIS2 Directive place obligations on organisations in relation to open source components. The first step is identifying which instruments may apply to your role in the ecosystem.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
         "appliesToRoles": ["distributor"],
-        "plain": "Distributors of products with digital elements face specific obligations under the CRA, including vulnerability notification duties and SBOM requirements. Most CRA obligations apply from September 2026, with SBOM requirements from December 2027.",
+        "plain": "Manufacturers and distributors of products with digital elements face obligations under the CRA. Under Article 71 of Regulation (EU) 2024/2847, obligations to report actively exploited vulnerabilities and severe incidents apply from 11 September 2026; the main obligations, including SBOM requirements, apply from 11 December 2027.",
         "boundary": "Signpost only. This does not decide whether the CRA applies to you. Confirm with a qualified specialist."
       }
     },
     "act": {
       "1": "Identify which EU instruments may apply to your organisation (CRA, NIS2, AI Act) and log your initial assessment with the date.",
       "2": "Map your regulatory role: are you a user, distributor, or steward of OSS components or products?",
-      "3": "Track the regulatory timeline (CRA September 2026, SBOM December 2027) and assign ownership of compliance readiness to a named role."
+      "3": "Track the regulatory timeline (CRA vulnerability reporting from 11 September 2026; main obligations including SBOM from 11 December 2027) and assign ownership of compliance readiness to a named role."
     },
     "learn": [
       { "title": "OpenSSF: Cyber Resilience Act resources", "type": "guide", "cost": "free", "url": "https://openssf.org/blog/2024/04/19/cyber-resilience-act-what-you-need-to-know/" },
       { "title": "ENISA: Cyber Resilience Act overview", "type": "doc", "cost": "free", "url": "https://www.enisa.europa.eu/topics/cyber-resilience-act" },
       { "title": "Eclipse Foundation: CRA FAQ for open source projects", "type": "doc", "cost": "free", "url": "https://www.eclipse.org/legal/cra-faq.php" },
+      { "title": "Cyber Resilience Act, Regulation (EU) 2024/2847 (EUR-Lex)", "type": "reference", "cost": "free", "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng" },
       { "title": "NIS2 Directive (EUR-Lex)", "type": "reference", "cost": "free", "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2555" }
     ]
   },
