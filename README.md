@@ -47,15 +47,15 @@ cd Practicum
 python -m http.server 8000
 ```
 
-The site works offline once loaded (a small service worker caches the assets). It makes no external calls at runtime: the Sora and Inter typefaces (SIL Open Font Licence) and the Open Ireland Network logo are served from `fonts/` and `assets/` alongside the code.
+The site works offline once loaded (a small service worker caches the assets). It makes no external calls at runtime: the Sora and Inter typefaces (SIL Open Font Licence) and the app icon are served from `fonts/` and `assets/` alongside the code.
 
 ## Visual identity
 
-The tool follows the [Open Ireland Network](https://openirelandnetwork.com) visual system on a white ground: Brand Green `#64bc46`, Near-Black `#231f20`, Green Tint `#e8f6e3`, with Sora for headings and Inter for everything else. One deliberate departure for WCAG 2.1 AA: Brand Green as text on white measures about 2.4:1, so green text (the "open source" accent, level numbers, stats, links) uses a deeper green, `--green-text: #367a1f` (5.3:1), while Brand Green is kept for bars, borders, fills, and badge grounds carrying Near-Black text. Warm Amber from the OIN extended palette is used only as a functional alert colour for high-risk states, always with Near-Black text.
+The tool uses a light visual system: white ground, Brand Green `#64bc46`, Near-Black `#231f20`, Green Tint `#e8f6e3`, with Sora for headings and Inter for everything else. The phrase "open source" is picked out in green in headings. One accessibility decision worth knowing: Brand Green as text on white measures about 2.4:1, which fails WCAG 2.1 AA even for large text, so green text (the "open source" accent, level numbers, stats, links) uses a deeper green, `--green-text: #367a1f` (5.3:1), while Brand Green is kept for bars, borders, fills, and badge grounds carrying Near-Black text. A warm amber is used only as a functional alert colour for high-risk states, always with Near-Black text. All tokens live in `:root` at the top of `styles.css`.
 
 ## Version history
 
-- **v2.5 (September 2026).** Parity with paper v2.5: cloud-native descriptors in every area (Appendix A), ownership asked before maturity level in each area, a per-area managed / self-managed field (Section 4.3), hosted-product CRA scope in the Regulatory Readiness guidance, base image and pipeline tooling in the resources, the Level 3 target block in the summary, and the Open Ireland Network visual identity with self-hosted fonts.
+- **v2.5 (September 2026).** Parity with paper v2.5: cloud-native descriptors in every area (Appendix A), ownership asked before maturity level in each area, a per-area managed / self-managed field (Section 4.3), hosted-product CRA scope in the Regulatory Readiness guidance, base image and pipeline tooling in the resources, the Level 3 target block in the summary, and a new light visual identity (Sora and Inter, self-hosted).
 - **v2.2 (July 2026).** README, user guide, CONTRIBUTING, corrected CRA dates, GitHub Pages workflow.
 - **v1 (June 2026).** Initial release with the v2 remediation layer.
 

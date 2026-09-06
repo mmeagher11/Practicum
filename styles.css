@@ -1,6 +1,6 @@
 /* Lightweight Open Source Governance Diagnostic - styles.css
-   Open Ireland Network visual system: Brand Green, Near-Black, white ground,
-   Sora for headings, Inter for everything else. Fonts are self-hosted so the
+   Visual system: Brand Green, Near-Black, white ground, Sora for headings,
+   Inter for everything else. Fonts are self-hosted so the
    tool makes no external calls at runtime and works offline. */
 
 /* ---- Self-hosted fonts (SIL Open Font Licence, see fonts/) ---- */
@@ -33,7 +33,7 @@
   src: url('fonts/inter-latin-700-normal.woff2') format('woff2');
 }
 
-/* ---- Design tokens (OIN shared palette) ---- */
+/* ---- Design tokens ---- */
 :root {
   --brand-green:  #64bc46;
   --near-black:   #231f20;
@@ -44,17 +44,15 @@
   /* Darker neutral for small text: Ink-60 is 3.9:1 on white, below AA for body-size copy,
      so captions and metadata use this instead. Decorative uses keep Ink-60. */
   --ink-80:       #545253;
-  /* OIN extended palette (community/event use). Used here only as a functional
-     alert colour for high-risk states; text on it is always Near-Black. */
+  /* Warm amber, used only as a functional alert colour for high-risk states;
+     text on it is always Near-Black. */
   --amber-deep:   #c97a00;
   --amber-mid:    #e8a020;
   --amber-tint:   #fdf3dc;
-  /* Brand Green as TEXT on white is 2.4:1 (the brand guide's 3.0:1 figure is optimistic),
-     which fails WCAG AA even for large text. Brand Green is therefore used for graphics
+  /* Brand Green as TEXT on white is 2.4:1, which fails WCAG AA even for large text. Brand Green is therefore used for graphics
      (bars, fills, borders, badge grounds carrying Near-Black text) and this deeper green
      for any green text: the "open source" accent, level numbers, stats, links.
-     5.3:1 on white, 4.7:1 on Green Tint. Set --green-text to var(--brand-green) to
-     prefer brand purity over AA. */
+     5.3:1 on white, 4.7:1 on Green Tint. */
   --green-text:   #367a1f;
 
   --font-heading: 'Sora', 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
@@ -194,20 +192,18 @@ p:last-child { margin-bottom: 0; }
   gap: 1rem;
   flex-wrap: wrap;
 }
-.header-brand { display: flex; align-items: center; gap: .9rem; min-width: 0; }
-.header-logo { display: inline-flex; align-items: center; line-height: 0; }
-.header-logo img { height: 36px; width: auto; display: block; }
-.header-divider { width: 1px; height: 28px; background: var(--ink-20); }
+.header-brand { display: flex; align-items: center; gap: .7rem; min-width: 0; }
+.header-mark { width: 32px; height: 32px; display: block; flex-shrink: 0; border-radius: 6px; }
 .header-tool {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: .95rem;
+  font-size: 1.05rem;
   color: var(--near-black);
-  white-space: nowrap;
+  line-height: 1.2;
 }
 .header-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 @media (max-width: 560px) {
-  .header-divider, .header-tool { display: none; }
+  .header-tool { font-size: .9rem; }
 }
 
 /* ---- Intro / hero ---- */
@@ -650,17 +646,7 @@ p:last-child { margin-bottom: 0; }
   padding: 2rem 0;
   margin-top: 1rem;
 }
-.footer-content {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 2rem;
-  font-size: .85rem;
-  align-items: start;
-}
-@media (max-width: 720px) { .footer-content { grid-template-columns: 1fr; } }
-.footer-brand img { height: 34px; width: auto; display: block; margin-bottom: .6rem; }
-.footer-tagline { font-size: .82rem; color: var(--ink-80); }
-.footer-tagline a { color: var(--ink-80); }
+.footer-content { font-size: .85rem; max-width: 900px; }
 .attribution { margin-bottom: .5rem; }
 .attribution em { font-style: italic; }
 .footer-links { margin-bottom: .5rem; font-weight: 700; }
@@ -690,9 +676,8 @@ p:last-child { margin-bottom: 0; }
     border-bottom: 2pt solid #64bc46;
     padding: 4mm 0 3mm;
   }
-  .header-logo img { height: 10mm; }
-  .header-tool { display: inline; font-size: 11pt; }
-  .header-divider { display: inline-block; }
+  .header-mark { width: 8mm; height: 8mm; }
+  .header-tool { font-size: 12pt; }
 
   .container { max-width: 100%; padding: 0; }
 
@@ -749,5 +734,4 @@ p:last-child { margin-bottom: 0; }
 
   .site-footer { background: #fff; border-top: 1pt solid #64bc46; padding: 3mm 0; margin-top: 3mm; }
   .footer-content { font-size: 7.5pt; }
-  .footer-brand img { height: 8mm; }
 }

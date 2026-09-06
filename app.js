@@ -111,11 +111,8 @@ function buildHeader() {
     <div class="container">
       <div class="header-inner">
         <div class="header-brand">
-          <a class="header-logo" href="https://openirelandnetwork.com" target="_blank" rel="noopener noreferrer">
-            <img src="assets/oin-logo-landscape.svg" alt="Open Ireland Network" width="200" height="37">
-          </a>
-          <span class="header-divider" aria-hidden="true"></span>
-          <span class="header-tool">OSS Governance Diagnostic</span>
+          <img class="header-mark" src="assets/icon.svg" alt="" width="32" height="32" aria-hidden="true">
+          <span class="header-tool">Lightweight <span class="os">Open Source</span> Governance Diagnostic</span>
         </div>
         <div class="header-actions no-print">
           <button id="hdr-print" class="btn btn-outline btn-sm">Print / PDF</button>
@@ -755,10 +752,6 @@ function buildFooter() {
   footer.innerHTML = `
     <div class="container">
       <div class="footer-content">
-        <div class="footer-brand">
-          <img src="assets/oin-logo-landscape.svg" alt="Open Ireland Network" width="180" height="33">
-          <p class="footer-tagline">Open Ireland Network | <a href="https://openirelandnetwork.com" target="_blank" rel="noopener noreferrer">openirelandnetwork.com</a></p>
-        </div>
         <div class="footer-text">
           <p class="attribution">
             Based on Meagher, M. (2026),

@@ -2,7 +2,7 @@
    Strategy: network first, cache as fallback. When the practitioner is online they
    always get the current build; when offline, the last good copy is served from cache.
    Bump CACHE whenever any listed asset changes so stale caches are cleared. */
-const CACHE = 'oss-diagnostic-v2.5.1';
+const CACHE = 'oss-diagnostic-v2.5.2';
 const ASSETS = [
   './',
   'index.html',
@@ -11,7 +11,6 @@ const ASSETS = [
   'data.js',
   'resources.json',
   'manifest.webmanifest',
-  'assets/oin-logo-landscape.svg',
   'assets/icon.svg',
   'fonts/sora-latin-700-normal.woff2',
   'fonts/sora-latin-800-normal.woff2',
