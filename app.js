@@ -1,16 +1,19 @@
-/* OSS Governance Diagnostic - app.js
-   Vanilla JS, no frameworks. All rendering via DOM API + innerHTML for static markup.
-   State is held in a module-level object and persisted to localStorage. */
+/* Lightweight Open Source Governance Diagnostic - app.js
+   Vanilla JS, no frameworks, no runtime network calls. All rendering via the DOM API
+   plus innerHTML for static markup. State is held in a module-level object and
+   persisted to localStorage. Mirrors Meagher (2026) v2.5. */
 'use strict';
 
 /* ---- State ---- */
 let state = {
   started: false,
   role: null,    // 'user' | 'contributor' | 'steward' | 'distributor'
-  areas: {}      // keyed by area id
+  areas: {}      // keyed by area id: { level, owner, nextAction, delivery }
 };
 
 const STORAGE_KEY = 'oss-governance-diagnostic-v1';
+const TOOL_NAME   = 'Lightweight Open Source Governance Diagnostic';
+const TOOL_VERSION = '2.5';
 
 /* ---- Persistence ---- */
 function saveState() {
@@ -25,6 +28,10 @@ function saveState() {
   }
 }
 
+function emptyArea() {
+  return { level: null, owner: '', nextAction: '', delivery: null };
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -36,11 +43,9 @@ function loadState() {
     }
   } catch (_) { /* start fresh */ }
 
-  /* Guarantee every area has a default entry */
+  /* Guarantee every area has a complete entry (older saves lack delivery) */
   AREAS.forEach(a => {
-    if (!state.areas[a.id]) {
-      state.areas[a.id] = { level: null, owner: '', nextAction: '' };
-    }
+    state.areas[a.id] = Object.assign(emptyArea(), state.areas[a.id] || {});
   });
 }
 
@@ -64,9 +69,14 @@ function esc(str) {
     .replace(/'/g, '&#39;');
 }
 
+/* Brand rule: the phrase "open source" is Brand Green in headings. */
+function greenOS(text) {
+  return esc(text).replace(/open source/gi, m => `<span class="os">${m}</span>`);
+}
+
 /* ---- Risk label/class ---- */
 const RISK_LABELS = {
-  high:         'High risk',
+  high:         'High risk if L1 to L2',
   medium:       'Medium risk',
   foundational: 'Foundational',
   lower:        'Lower risk'
@@ -100,18 +110,16 @@ function buildHeader() {
   header.innerHTML = `
     <div class="container">
       <div class="header-inner">
-        <div class="header-title">
-          <span class="header-logo" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="13" cy="13" r="11.5" stroke="currentColor" stroke-width="2"/>
-              <path d="M7 13h12M13 7v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <h1>OSS Governance Diagnostic</h1>
+        <div class="header-brand">
+          <a class="header-logo" href="https://openirelandnetwork.com" target="_blank" rel="noopener noreferrer">
+            <img src="assets/oin-logo-landscape.svg" alt="Open Ireland Network" width="200" height="37">
+          </a>
+          <span class="header-divider" aria-hidden="true"></span>
+          <span class="header-tool">OSS Governance Diagnostic</span>
         </div>
         <div class="header-actions no-print">
-          <button id="hdr-print" class="btn btn-secondary btn-sm">Print / PDF</button>
-          <button id="hdr-clear" class="btn btn-ghost btn-sm">Clear / start again</button>
+          <button id="hdr-print" class="btn btn-outline btn-sm">Print / PDF</button>
+          <button id="hdr-clear" class="btn btn-ghost btn-sm">Clear and start again</button>
         </div>
       </div>
     </div>`;
@@ -121,28 +129,47 @@ function buildHeader() {
   return header;
 }
 
-/* ---- Intro ---- */
+/* ---- Intro / hero ---- */
 function buildIntro() {
   const sec = document.createElement('section');
   sec.className = 'intro-panel';
   sec.innerHTML = `
     <div class="container">
       <div class="intro-content">
-        <h2>What is this tool?</h2>
-        <p>
-          This is a governance self-assessment for European SMEs using open source software (OSS).
-          It covers seven capability areas, from internal ownership through to regulatory readiness,
-          and surfaces targeted guidance once you record your current level in each area.
-          It is a self-assessment, not legal advice. Where it indicates specific legal or
-          Cyber Resilience Act (CRA) exposure, specialist input is needed before acting on that assessment.
+        <p class="eyebrow">Self-assessment for European SMEs</p>
+        <h1>Know where your <span class="os">open source</span> governance stands<span class="os">.</span></h1>
+        <p class="lede">
+          Most European SMEs run on open source software, and increasingly they consume it through
+          the cloud: base container images, managed platform services, CI/CD pipelines, and
+          infrastructure defined as code. Most govern none of it. The Cyber Resilience Act and NIS2
+          have put a clock on that. This Diagnostic helps a founder, CTO, or operations lead work out
+          where governance currently sits across seven capability areas, who owns it or should, and
+          what the single most immediate next step looks like.
         </p>
+        <div class="intro-grid">
+          <div class="intro-point">
+            <h3>Ownership first</h3>
+            <p>Each area asks who is responsible before it asks how mature you are. Naming an owner is the foundational governance act.</p>
+          </div>
+          <div class="intro-point">
+            <h3>Built for cloud-native stacks</h3>
+            <p>Where a component is consumed as a managed service, note who patches it: you or the provider. The answers change with that split.</p>
+          </div>
+          <div class="intro-point">
+            <h3>Nothing leaves your machine</h3>
+            <p>No accounts, no server, no analytics. Answers save in your browser, export to CSV or JSON, and print to the A3 worksheet.</p>
+          </div>
+        </div>
         <div class="disclaimer">
-          <strong>Disclaimer:</strong> This tool helps you reflect on your current practices in a structured way.
-          It does not constitute legal advice and does not determine whether any specific EU regulation applies to
-          your organisation. Where regulatory exposure is signposted, please consult a qualified specialist.
+          <strong>This is a self-assessment, not legal advice.</strong> It does not determine whether any
+          specific EU regulation applies to your organisation. Where regulatory exposure is signposted,
+          for example a copyleft question or a possible CRA obligation, take it to a qualified specialist.
         </div>
         ${!state.started
-          ? `<button id="btn-start" class="btn btn-primary btn-lg no-print">Start assessment</button>`
+          ? `<div class="intro-actions no-print">
+               <button id="btn-start" class="btn btn-primary btn-lg">Start the assessment</button>
+               <a class="btn btn-outline btn-lg" href="docs/USER-GUIDE.md" target="_blank" rel="noopener noreferrer">Read the user guide</a>
+             </div>`
           : ''}
       </div>
     </div>`;
@@ -165,7 +192,7 @@ const ROLES = [
   {
     id: 'user',
     label: 'User',
-    desc: 'We use OSS components in our products or operations but do not distribute or publish them externally.'
+    desc: 'We use OSS components in our products or operations, including through cloud services, but do not distribute or publish them externally.'
   },
   {
     id: 'contributor',
@@ -180,7 +207,7 @@ const ROLES = [
   {
     id: 'distributor',
     label: 'Commercial distributor',
-    desc: 'We distribute a product with digital elements (hardware or software) to customers on the EU market.'
+    desc: 'We place a product with digital elements on the EU market. A hosted or SaaS product can count where the remote service is an essential part of the product.'
   }
 ];
 
@@ -190,9 +217,11 @@ function buildRoleSelector() {
   sec.className = 'role-section';
   sec.innerHTML = `
     <div class="container">
+      <p class="eyebrow">Step 1 of 3</p>
       <h2>Your organisation's role</h2>
-      <p>Select the option that best describes your relationship with the OSS components you use.
-         This determines which regulatory context appears in the guidance panels below.</p>
+      <p class="section-lede">Select the option that best describes your relationship with the open source you use.
+         This decides which regulatory context appears in the guidance panels, and nothing else.
+         Most SMEs do not know which of these roles they occupy in regulatory terms; picking one here is a first step, not a determination.</p>
       <div class="role-grid">
         ${ROLES.map(r => `
           <label class="role-card${state.role === r.id ? ' selected' : ''}">
@@ -205,12 +234,15 @@ function buildRoleSelector() {
 
   sec.querySelectorAll('input[name="org-role"]').forEach(input => {
     input.addEventListener('change', () => {
+      const first = !state.role;
       state.role = input.value;
       saveState();
       render();
-      setTimeout(() => {
-        document.getElementById('role-selector')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 60);
+      if (first) {
+        setTimeout(() => {
+          document.getElementById('matrix')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+      }
     });
   });
 
@@ -220,10 +252,16 @@ function buildRoleSelector() {
 /* ---- Matrix ---- */
 function buildMatrix() {
   const sec = document.createElement('section');
+  sec.id = 'matrix';
   sec.className = 'matrix-section';
   const container = document.createElement('div');
   container.className = 'container';
-  container.innerHTML = '<h2>Capability Assessment</h2>';
+  container.innerHTML = `
+    <p class="eyebrow">Step 2 of 3</p>
+    <h2>Capability assessment</h2>
+    <p class="section-lede">For each of the seven areas, name an owner (even an informal one), note who runs the
+      components involved, mark your current level, and record the single most immediate next action.
+      Rate where the organisation is, not where it would like to be.</p>`;
 
   AREAS.forEach(area => container.appendChild(buildAreaCard(area)));
 
@@ -233,9 +271,9 @@ function buildMatrix() {
 
 function buildAreaCard(area) {
   const areaState = state.areas[area.id];
-  const resources = state.resources.find(r => r.areaId === area.id);
+  const resources = (state.resources || []).find(r => r.areaId === area.id);
 
-  const card = document.createElement('div');
+  const card = document.createElement('article');
   card.className = `area-card${areaState.level ? ' area-assessed' : ''}`;
   card.id = `area-${area.id}`;
 
@@ -243,19 +281,41 @@ function buildAreaCard(area) {
     <div class="area-header">
       <div class="area-title">
         <span class="area-number" aria-hidden="true">${area.id}</span>
-        <h3>${esc(area.name)}</h3>
+        <h3>${greenOS(area.name)}</h3>
       </div>
       <span class="risk-badge risk-${area.risk}">${esc(RISK_LABELS[area.risk] || area.risk)}</span>
     </div>
 
+    <p class="area-prompt">${esc(area.prompt)}</p>
+
+    <div class="area-inputs area-inputs-top">
+      <div class="input-group">
+        <label for="area-${area.id}-owner">Owner or responsible role <span class="label-hint">(name the current owner, even if informal)</span></label>
+        <input type="text" id="area-${area.id}-owner" class="text-input"
+          placeholder="e.g. CTO, Head of Engineering, Tech Lead"
+          value="${esc(areaState.owner)}" maxlength="120"
+          autocomplete="off">
+      </div>
+      <fieldset class="input-group delivery-group">
+        <legend>Who runs the components this area covers?</legend>
+        <div class="delivery-options">
+          ${DELIVERY_MODELS.map(d => `
+            <label class="delivery-option${areaState.delivery === d.id ? ' selected' : ''}" title="${esc(d.desc)}">
+              <input type="radio" name="area-${area.id}-delivery" value="${d.id}"${areaState.delivery === d.id ? ' checked' : ''}>
+              <span>${esc(d.label)}</span>
+            </label>`).join('')}
+        </div>
+      </fieldset>
+    </div>
+
     <div class="level-selector">
-      <div class="level-legend">Select your current maturity level:</div>
-      <div class="level-grid">
+      <div class="level-legend" id="area-${area.id}-legend">Select your current maturity level</div>
+      <div class="level-grid" role="radiogroup" aria-labelledby="area-${area.id}-legend">
         ${Object.entries(MATURITY_LEVELS).map(([lvl, title]) => `
           <label class="level-card${areaState.level === +lvl ? ' selected' : ''}">
             <input type="radio" name="area-${area.id}-level" value="${lvl}"
               ${areaState.level === +lvl ? 'checked' : ''}
-              aria-label="Level ${lvl}: ${esc(title)}">
+              aria-label="Level ${lvl}: ${esc(title)}. ${esc(area.levels[lvl])}">
             <div class="level-card-inner">
               <div class="level-number">${lvl}</div>
               <div class="level-title">${esc(title)}</div>
@@ -266,17 +326,10 @@ function buildAreaCard(area) {
     </div>
 
     <div class="area-inputs">
-      <div class="input-group">
-        <label for="area-${area.id}-owner">Owner / responsible role</label>
-        <input type="text" id="area-${area.id}-owner" class="text-input"
-          placeholder="e.g. Head of Engineering, Tech Lead"
-          value="${esc(areaState.owner)}" maxlength="120"
-          autocomplete="off">
-      </div>
-      <div class="input-group">
+      <div class="input-group input-group-wide">
         <label for="area-${area.id}-action">Single most immediate next action</label>
         <input type="text" id="area-${area.id}-action" class="text-input"
-          placeholder="The one concrete thing to do next"
+          placeholder="The one concrete thing to do next from your current level"
           value="${esc(areaState.nextAction)}" maxlength="240"
           autocomplete="off">
       </div>
@@ -294,14 +347,12 @@ function buildAreaCard(area) {
       state.areas[area.id].level = newLevel;
       saveState();
 
-      /* Update level card visual state within this card only */
       card.querySelectorAll('.level-card').forEach(lc => {
         const v = +(lc.querySelector('input')?.value);
         lc.classList.toggle('selected', v === newLevel);
       });
       card.classList.add('area-assessed');
 
-      /* Show/update remediation panel */
       const panel = card.querySelector('.remediation-panel');
       if (panel && resources) {
         panel.classList.add('visible');
@@ -309,6 +360,18 @@ function buildAreaCard(area) {
         if (body) body.innerHTML = remediationBodyHTML(newLevel, resources);
       }
 
+      updateSummary();
+    });
+  });
+
+  /* Delivery model selection */
+  card.querySelectorAll(`input[name="area-${area.id}-delivery"]`).forEach(input => {
+    input.addEventListener('change', () => {
+      state.areas[area.id].delivery = input.value;
+      saveState();
+      card.querySelectorAll('.delivery-option').forEach(o => {
+        o.classList.toggle('selected', o.querySelector('input')?.value === input.value);
+      });
       updateSummary();
     });
   });
@@ -336,8 +399,8 @@ function buildRemediationPanel(areaId, level, resources) {
   div.innerHTML = `
     <div class="remediation-inner">
       <div class="remediation-header">
-        <h4>Guidance</h4>
-        <span class="last-reviewed">Content last reviewed: ${esc(resources.lastReviewed)}</span>
+        <h4>Guidance for your current level</h4>
+        <span class="last-reviewed">Content last reviewed ${esc(resources.lastReviewed)}</span>
       </div>
       <div class="remediation-body">
         ${level ? remediationBodyHTML(level, resources) : ''}
@@ -357,6 +420,9 @@ function remediationBodyHTML(level, resources) {
   for (let l = level; l >= 1; l--) {
     if (resources.act[l]) { actText = resources.act[l]; break; }
   }
+  if (level === 5 && !resources.act[5]) {
+    actText = 'You are at the top of the scale for this area. Keep the practice under periodic review so it survives staff turnover, and consider contributing your approach back to the community that maintains this tool.';
+  }
 
   const learnItems = resources.learn.map(item => `
     <li class="learn-item">
@@ -375,7 +441,7 @@ function remediationBodyHTML(level, resources) {
         <div class="reg-hook">
           <span class="reg-hook-badge">${esc(hook.instrument)}</span>
           <p>${esc(hook.plain)}</p>
-          <p class="reg-boundary"><em>${esc(hook.boundary)}</em></p>
+          <p class="reg-boundary">${esc(hook.boundary)}</p>
         </div>` : ''}
     </div>
     <div class="rem-act">
@@ -404,30 +470,43 @@ function summaryHTML() {
 
   const avg = count > 0
     ? (assessed.reduce((s, a) => s + state.areas[a.id].level, 0) / count).toFixed(1)
-    : '--';
+    : 'n/a';
 
   /* Lowest-scoring areas (up to 3, only assessed ones) */
-  const sorted   = [...assessed].sort((a, b) => state.areas[a.id].level - state.areas[b.id].level);
-  const lowest   = sorted.slice(0, 3);
+  const sorted = [...assessed].sort((a, b) => state.areas[a.id].level - state.areas[b.id].level);
+  const lowest = sorted.slice(0, 3);
 
   /* High-risk areas at Level 1 or 2 */
   const highRiskLow = AREAS.filter(a =>
     a.risk === 'high' && state.areas[a.id]?.level && state.areas[a.id].level <= 2
   );
 
-  /* Check Area 1 (Internal Ownership) owner */
+  /* Headline: Area 1 (Internal Ownership) owner */
   const ownerNamed = (state.areas[1]?.owner || '').trim().length > 0;
 
-  return `
-    <h2>Live Summary</h2>
+  /* Ownership coverage and delivery split across all areas */
+  const ownersNamed = AREAS.filter(a => (state.areas[a.id]?.owner || '').trim().length > 0).length;
+  const deliveryRecorded = AREAS.filter(a => state.areas[a.id]?.delivery).length;
 
-    <div class="summary-headline ${ownerNamed ? 'headline-ok' : 'headline-alert'}">
+  /* Target: Level 3 in Security and Licensing before CRA / NIS2 obligations activate */
+  const targetRows = TARGET_AREAS.map(id => {
+    const area = AREAS.find(a => a.id === id);
+    const lvl  = state.areas[id]?.level;
+    const met  = lvl != null && lvl >= TARGET_LEVEL;
+    return { area, lvl, met };
+  });
+
+  return `
+    <p class="eyebrow">Step 3 of 3</p>
+    <h2>Live summary</h2>
+
+    <div class="summary-headline ${ownerNamed ? 'headline-ok' : 'headline-alert'}" role="status">
       <span class="headline-icon" aria-hidden="true">${ownerNamed ? '&#10003;' : '!'}</span>
       <span>
-        Have you named an owner for OSS governance overall?
+        Has an owner been named for open source governance overall?
         ${ownerNamed
-          ? ` <strong>Yes</strong> (${esc(state.areas[1].owner)})`
-          : ' <strong>Not yet.</strong> Enter an owner in the Internal Ownership area above.'}
+          ? ` <strong>Yes</strong> (${esc(state.areas[1].owner)}). That is the single most consequential outcome of a first pass.`
+          : ' <strong>Not yet.</strong> Enter an owner in Internal Ownership above, even an interim one. Nothing else in this assessment works without it.'}
       </span>
     </div>
 
@@ -438,17 +517,22 @@ function summaryHTML() {
       </div>
       <div class="summary-stat">
         <div class="stat-value">${avg}</div>
-        <div class="stat-label">Average maturity score</div>
+        <div class="stat-label">Average maturity level</div>
       </div>
       <div class="summary-stat">
         <div class="stat-value${highRiskLow.length > 0 ? ' stat-alert' : ''}">${highRiskLow.length}</div>
         <div class="stat-label">High-risk areas at Level 1 or 2</div>
       </div>
+      <div class="summary-stat">
+        <div class="stat-value">${ownersNamed}&thinsp;/&thinsp;${total}</div>
+        <div class="stat-label">Areas with a named owner</div>
+      </div>
     </div>
 
     ${highRiskLow.length > 0 ? `
-      <div class="summary-block">
-        <h3>Prioritised: high-risk areas requiring attention</h3>
+      <div class="summary-block summary-block-alert">
+        <h3>Prioritised: high-risk areas at Level 1 or 2</h3>
+        <p class="summary-note">These carry the most immediate CRA and NIS2 exposure and should come first.</p>
         <ul class="summary-list">
           ${highRiskLow.map(a => `
             <li class="summary-list-item alert">
@@ -470,6 +554,31 @@ function summaryHTML() {
         </ul>
       </div>` : ''}
 
+    ${count > 0 ? `
+      <div class="summary-block">
+        <h3>Target: Level ${TARGET_LEVEL} in Security and Licensing before the relevant CRA / NIS2 obligations activate</h3>
+        <p class="summary-note">A design threshold argued from the regulatory timeline, not a level required by any framework. Reaching it in the two highest-risk areas is the minimum viable governance posture worth targeting first.</p>
+        <ul class="summary-list">
+          ${targetRows.map(t => `
+            <li class="summary-list-item${t.met ? ' ok' : (t.lvl ? ' alert' : '')}">
+              <a href="#area-${t.area.id}" class="area-link">${esc(t.area.name)}</a>
+              <span class="level-chip${t.met ? ' level-chip-ok' : (t.lvl ? ' level-chip-low' : '')}">
+                ${t.lvl ? `Level ${t.lvl}${t.met ? ': target met' : `: ${TARGET_LEVEL - t.lvl} level${TARGET_LEVEL - t.lvl > 1 ? 's' : ''} to go`}` : 'Not yet assessed'}
+              </span>
+            </li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="summary-block">
+        <h3>Managed and self-managed split</h3>
+        <p class="summary-note">
+          Recorded for ${deliveryRecorded} of ${total} areas.
+          ${deliveryRecorded < total
+            ? 'From Level 3 onwards this decides who is responsible when a vulnerability or advisory appears; assuming the provider covers something it does not is the most common way a self-assessment overstates maturity.'
+            : 'Good. Check the Security and Maintenance answer against it: does someone know who patches each important component?'}
+        </p>
+      </div>` : ''}
+
     ${count === 0 ? `<p class="summary-empty">Complete the assessment above to see your summary here.</p>` : ''}`;
 }
 
@@ -486,27 +595,24 @@ function buildExportControls() {
   sec.className = 'export-section no-print';
   sec.innerHTML = `
     <div class="container">
-      <h2>Export and Import</h2>
+      <h2>Export, print, or restore</h2>
+      <p class="section-lede">Your assessment is saved automatically in this browser. Export it to keep a copy, share it, or revisit it later; the Diagnostic is meant to be repeated, not completed once.</p>
       <div class="export-grid">
         <div class="export-group">
           <h3>Export your assessment</h3>
           <div class="btn-group">
-            <button id="exp-json" class="btn btn-secondary">Download JSON</button>
-            <button id="exp-csv"  class="btn btn-secondary">Download CSV</button>
-            <button id="exp-print" class="btn btn-secondary">Print / Save as PDF</button>
+            <button id="exp-json" class="btn btn-outline">Download JSON</button>
+            <button id="exp-csv"  class="btn btn-outline">Download CSV</button>
+            <button id="exp-print" class="btn btn-outline">Print or save as PDF (A3)</button>
           </div>
         </div>
         <div class="export-group">
-          <h3>Import a saved assessment</h3>
+          <h3>Restore a saved assessment</h3>
           <div class="btn-group">
-            <label class="btn btn-secondary" style="cursor:pointer;">
-              Import JSON
-              <input type="file" id="imp-file" accept=".json" style="display:none">
-            </label>
+            <label class="btn btn-outline" for="imp-file">Import JSON</label>
+            <input type="file" id="imp-file" accept=".json,application/json" class="sr-only">
           </div>
-          <p style="font-size:.78rem;color:var(--c-text-muted);margin-top:.5rem;">
-            Import a JSON file previously exported from this tool.
-          </p>
+          <p class="export-hint">Import a JSON file previously exported from this tool. It replaces what is currently on screen.</p>
         </div>
       </div>
     </div>`;
@@ -519,21 +625,29 @@ function buildExportControls() {
 }
 
 /* ---- Export: JSON ---- */
+function deliveryLabel(id) {
+  const d = DELIVERY_MODELS.find(x => x.id === id);
+  return d ? d.label : '';
+}
+
 function exportJSON() {
   const payload = {
     exportedAt: new Date().toISOString(),
-    tool: 'OSS Governance Diagnostic',
+    tool: TOOL_NAME,
+    version: TOOL_VERSION,
     role: state.role,
     areas: AREAS.map(area => ({
-      id:         area.id,
-      name:       area.name,
-      risk:       area.risk,
-      level:      state.areas[area.id]?.level  ?? null,
-      levelLabel: state.areas[area.id]?.level  != null
-                    ? MATURITY_LEVELS[state.areas[area.id].level]
-                    : null,
-      owner:      state.areas[area.id]?.owner      || '',
-      nextAction: state.areas[area.id]?.nextAction || ''
+      id:            area.id,
+      name:          area.name,
+      risk:          area.risk,
+      level:         state.areas[area.id]?.level  ?? null,
+      levelLabel:    state.areas[area.id]?.level  != null
+                       ? MATURITY_LEVELS[state.areas[area.id].level]
+                       : null,
+      owner:         state.areas[area.id]?.owner      || '',
+      delivery:      state.areas[area.id]?.delivery   || null,
+      deliveryLabel: deliveryLabel(state.areas[area.id]?.delivery),
+      nextAction:    state.areas[area.id]?.nextAction || ''
     }))
   };
   downloadBlob(
@@ -544,7 +658,7 @@ function exportJSON() {
 
 /* ---- Export: CSV ---- */
 function exportCSV() {
-  const headers = ['Area ID', 'Area Name', 'Risk Level', 'Maturity Level', 'Level Label', 'Owner / Role', 'Next Action'];
+  const headers = ['Area ID', 'Area Name', 'Risk Level', 'Maturity Level', 'Level Label', 'Owner / Role', 'Who runs the components', 'Next Action'];
   const rows = AREAS.map(area => {
     const s = state.areas[area.id] || {};
     return [
@@ -554,6 +668,7 @@ function exportCSV() {
       s.level ?? '',
       s.level != null ? MATURITY_LEVELS[s.level] : '',
       s.owner      || '',
+      deliveryLabel(s.delivery),
       s.nextAction || ''
     ].map(csvCell).join(',');
   });
@@ -585,10 +700,12 @@ function importJSON(e) {
 
       data.areas.forEach(a => {
         if (a.id != null && state.areas[a.id] !== undefined) {
+          const validDelivery = DELIVERY_MODELS.some(d => d.id === a.delivery) ? a.delivery : null;
           state.areas[a.id] = {
             level:      a.level      ?? null,
             owner:      a.owner      ?? '',
-            nextAction: a.nextAction ?? ''
+            nextAction: a.nextAction ?? '',
+            delivery:   validDelivery
           };
         }
       });
@@ -598,7 +715,7 @@ function importJSON(e) {
       render();
     } catch (_) {
       /* eslint-disable-next-line no-alert */
-      alert('Could not import the file. Please make sure it is a valid OSS Governance Diagnostic JSON export.');
+      alert('Could not import the file. Please make sure it is a valid JSON export from this Diagnostic.');
     }
     e.target.value = '';
   };
@@ -624,7 +741,7 @@ function clearAll() {
   state = {
     started:   false,
     role:      null,
-    areas:     Object.fromEntries(AREAS.map(a => [a.id, { level: null, owner: '', nextAction: '' }])),
+    areas:     Object.fromEntries(AREAS.map(a => [a.id, emptyArea()])),
     resources: res
   };
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -638,20 +755,31 @@ function buildFooter() {
   footer.innerHTML = `
     <div class="container">
       <div class="footer-content">
-        <p class="attribution">
-          Based on Meagher, M. (2026),
-          <em>Open Source Governance Capabilities for European SMEs</em>,
-          MSc Practicum, National College of Ireland.
-        </p>
-        <p class="footer-links">
-          <a href="LICENSE" target="_blank" rel="noopener noreferrer">MIT Licence</a>
-          &middot;
-          <a href="https://github.com/mickmeagher/oss-governance-diagnostic" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
-        </p>
-        <p class="footer-disclaimer">
-          Remediation content is community-maintained; last reviewed dates are shown per item.
-          This tool is a self-assessment aid and does not constitute legal advice.
-        </p>
+        <div class="footer-brand">
+          <img src="assets/oin-logo-landscape.svg" alt="Open Ireland Network" width="180" height="33">
+          <p class="footer-tagline">Open Ireland Network | <a href="https://openirelandnetwork.com" target="_blank" rel="noopener noreferrer">openirelandnetwork.com</a></p>
+        </div>
+        <div class="footer-text">
+          <p class="attribution">
+            Based on Meagher, M. (2026),
+            <em>Open Source Governance Capabilities for European SMEs: Developing a Lightweight Diagnostic Tool for Cloud-Native SMEs</em>,
+            MSc Digital4Business Final Practicum, National College of Ireland. Version ${TOOL_VERSION}.
+          </p>
+          <p class="footer-links">
+            <a href="LICENSE" target="_blank" rel="noopener noreferrer">MIT licence</a>
+            &middot;
+            <a href="https://github.com/mmeagher11/Practicum" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+            &middot;
+            <a href="docs/USER-GUIDE.md" target="_blank" rel="noopener noreferrer">User guide</a>
+            &middot;
+            <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
+          </p>
+          <p class="footer-disclaimer">
+            Remediation content is community-maintained; last reviewed dates are shown per area.
+            This tool is a self-assessment aid and does not constitute legal advice.
+            It signposts regulatory context and never determines whether an obligation applies to you.
+          </p>
+        </div>
       </div>
     </div>`;
   return footer;

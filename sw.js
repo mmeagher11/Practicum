@@ -1,5 +1,6 @@
-/* Service worker - caches all static assets for offline use */
-const CACHE = 'oss-diagnostic-v1';
+/* Service worker - caches all static assets for offline use.
+   Bump CACHE whenever any listed asset changes so clients pick up the new build. */
+const CACHE = 'oss-diagnostic-v2.5';
 const ASSETS = [
   '.',
   'index.html',
@@ -7,7 +8,13 @@ const ASSETS = [
   'app.js',
   'data.js',
   'resources.json',
-  'manifest.webmanifest'
+  'manifest.webmanifest',
+  'assets/oin-logo-landscape.svg',
+  'assets/icon.svg',
+  'fonts/sora-latin-700-normal.woff2',
+  'fonts/sora-latin-800-normal.woff2',
+  'fonts/inter-latin-400-normal.woff2',
+  'fonts/inter-latin-700-normal.woff2'
 ];
 
 self.addEventListener('install', event => {
@@ -27,7 +34,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Only cache same-origin GET requests
+  // Only handle same-origin GET requests; nothing ever leaves the origin.
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;

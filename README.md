@@ -1,6 +1,6 @@
 # Lightweight Open Source Governance Diagnostic
 
-A free, browser-based self-assessment tool that helps European SMEs work out where their open source governance stands, who should own it, and what to do next. Built as the digital artefact accompanying the MSc dissertation *Open Source Governance Capabilities for European SMEs: Developing a Lightweight Diagnostic Tool* (Meagher, 2026, National College of Ireland).
+A free, browser-based self-assessment tool that helps European SMEs work out where their open source governance stands, who should own it, and what to do next. It is built for the way most SMEs now consume open source, through cloud services they rent: base images, managed platform services, CI/CD pipelines, and infrastructure as code. Built as the digital artefact accompanying the MSc dissertation *Open Source Governance Capabilities for European SMEs: Developing a Lightweight Diagnostic Tool for Cloud-Native SMEs* (Meagher, 2026, National College of Ireland).
 
 **Live tool:** https://mmeagher11.github.io/Practicum/
 
@@ -14,7 +14,7 @@ Existing maturity frameworks (the Linux Foundation five-stage OSPO model, FINOS 
 
 ## What it does
 
-The Diagnostic is a seven-by-five maturity matrix. For each of seven capability areas you select your current level (1 Unaware to 5 Integrated capability), name an owner, and record the single most immediate next action:
+The Diagnostic is a seven-by-five maturity matrix. For each of seven capability areas you name an owner first, note whether the components involved are self-managed or run by a provider, select your current level (1 Unaware to 5 Integrated capability), and record the single most immediate next action:
 
 1. Internal Ownership (foundational)
 2. Software Visibility (high risk)
@@ -24,7 +24,7 @@ The Diagnostic is a seven-by-five maturity matrix. For each of seven capability 
 6. Regulatory Readiness
 7. External Collaboration and Contribution
 
-The tool shows a live summary of your lowest-scoring and highest-risk areas, saves progress locally in your browser, and exports to print/PDF, CSV, and JSON. A remediation layer signposts what to do from your current level, with curated free resources per area.
+The tool shows a live summary of your lowest-scoring and highest-risk areas and your distance from the Level 3 target in Security and Licensing, saves progress locally in your browser, and exports to print/PDF, CSV, and JSON. A remediation layer signposts what to do from your current level, with curated free resources per area, including tooling for generating an SBOM inside a build pipeline and scanning base images.
 
 See the [User Guide](docs/USER-GUIDE.md) for a full walkthrough.
 
@@ -47,7 +47,17 @@ cd Practicum
 python -m http.server 8000
 ```
 
-The site works offline once loaded (a small service worker caches the assets).
+The site works offline once loaded (a small service worker caches the assets). It makes no external calls at runtime: the Sora and Inter typefaces (SIL Open Font Licence) and the Open Ireland Network logo are served from `fonts/` and `assets/` alongside the code.
+
+## Visual identity
+
+The tool follows the [Open Ireland Network](https://openirelandnetwork.com) visual system on a white ground: Brand Green `#64bc46`, Near-Black `#231f20`, Green Tint `#e8f6e3`, with Sora for headings and Inter for everything else. One deliberate departure for WCAG 2.1 AA: Brand Green as text on white measures about 2.4:1, so green text (the "open source" accent, level numbers, stats, links) uses a deeper green, `--green-text: #367a1f` (5.3:1), while Brand Green is kept for bars, borders, fills, and badge grounds carrying Near-Black text. Warm Amber from the OIN extended palette is used only as a functional alert colour for high-risk states, always with Near-Black text.
+
+## Version history
+
+- **v2.5 (September 2026).** Parity with paper v2.5: cloud-native descriptors in every area (Appendix A), ownership asked before maturity level in each area, a per-area managed / self-managed field (Section 4.3), hosted-product CRA scope in the Regulatory Readiness guidance, base image and pipeline tooling in the resources, the Level 3 target block in the summary, and the Open Ireland Network visual identity with self-hosted fonts.
+- **v2.2 (July 2026).** README, user guide, CONTRIBUTING, corrected CRA dates, GitHub Pages workflow.
+- **v1 (June 2026).** Initial release with the v2 remediation layer.
 
 ## Deploying
 

@@ -2,12 +2,14 @@
   {
     "areaId": 1,
     "area": "Internal Ownership",
-    "lastReviewed": "2026-07-03",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "Without a named owner, OSS governance defaults to whoever made the last decision or, more often, to no one at all. Accountability gaps create blind spots in security response, licence compliance, and regulatory readiness.",
+      "plain": "Without a named owner, OSS governance defaults to whoever made the last decision or, more often, to no one at all. In a cloud-delivered stack that gap is wider than it looks: open source arrives through application code, base images, deployment pipelines and managed services, and where ownership exists it often stops at the application layer.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
-        "appliesToRoles": ["distributor"],
+        "appliesToRoles": [
+          "distributor"
+        ],
         "plain": "The CRA requires manufacturers of products with digital elements to operate defined vulnerability handling and compliance processes. Those processes presuppose clear internal responsibility; undefined ownership is a structural gap against that expectation.",
         "boundary": "Signpost only. This does not decide whether the CRA applies to you. Confirm with a qualified specialist."
       }
@@ -15,152 +17,344 @@
     "act": {
       "1": "Name one person, even informally, as the point of contact for OSS questions. Write their name somewhere shared and accessible to the team.",
       "2": "Document the OSS owner in a team wiki or repository README. Define what decisions they are consulted on.",
-      "3": "Formalise the role with a written remit covering scope, decision rights, and escalation path. Include it in relevant role descriptions.",
+      "3": "Formalise the role with a written remit that covers the application, base image and pipeline layers, plus the managed services you consume. Include it in relevant role descriptions.",
       "4": "Ensure the owner role is part of succession planning and onboarding documentation so it survives staff turnover."
     },
     "learn": [
-      { "title": "OSPO Alliance: GGI Handbook", "type": "guide", "cost": "free", "url": "https://ospo-alliance.org/ggi/" },
-      { "title": "TODO Group: Creating an Open Source Program", "type": "guide", "cost": "free", "url": "https://todogroup.org/resources/guides/" },
-      { "title": "Linux Foundation: Open Source Program Office guides", "type": "guide", "cost": "free", "url": "https://www.linuxfoundation.org/resources/open-source-guides/creating-an-open-source-program" }
+      {
+        "title": "OSPO Alliance: GGI Handbook",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://ospo-alliance.org/ggi/"
+      },
+      {
+        "title": "TODO Group: Creating an Open Source Program",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://todogroup.org/resources/guides/"
+      },
+      {
+        "title": "Linux Foundation: Open Source Program Office guides",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://www.linuxfoundation.org/resources/open-source-guides/creating-an-open-source-program"
+      }
     ]
   },
   {
     "areaId": 2,
     "area": "Software Visibility",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "If you cannot list what open source is in your stack, you cannot answer a customer security questionnaire, patch a known vulnerability with confidence, or produce a software bill of materials (SBOM).",
+      "plain": "If you cannot list what open source is in your stack, you cannot answer a customer security questionnaire, patch a known vulnerability with confidence, or produce a software bill of materials (SBOM). A dependency file shows the application libraries; it does not show the base image underneath, the sidecars added at deployment, the pipeline actions, or the open source engines behind your managed services.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
-        "appliesToRoles": ["distributor"],
+        "appliesToRoles": [
+          "distributor"
+        ],
         "plain": "If you place a product with digital elements on the EU market, you will need an SBOM. SBOM obligations under the CRA apply from December 2027.",
         "boundary": "Signpost only. This does not decide whether the CRA applies to you. Confirm with a qualified specialist."
       }
     },
     "act": {
-      "1": "Generate a first inventory from your existing build tooling and save it somewhere shared.",
-      "2": "Pick an SBOM format (SPDX or CycloneDX) and produce one SBOM for your main product.",
-      "3": "Automate SBOM generation in CI and assign an owner to keep it current."
+      "1": "Generate a first inventory from your existing build tooling and save it somewhere shared. Include the base image, not just the application manifest.",
+      "2": "Pick an SBOM format (SPDX or CycloneDX) and produce one SBOM for your main product that covers the container image as well as the application layer.",
+      "3": "Generate the SBOM inside the build pipeline on every build rather than auditing a running environment that the next deployment will replace, and assign an owner to keep it current."
     },
     "learn": [
-      { "title": "SPDX specification", "type": "standard", "cost": "free", "url": "https://spdx.dev/" },
-      { "title": "CycloneDX specification", "type": "standard", "cost": "free", "url": "https://cyclonedx.org/" },
-      { "title": "Syft (SBOM generator, open source)", "type": "tool", "cost": "free", "url": "https://github.com/anchore/syft" },
-      { "title": "OWASP Dependency-Track", "type": "tool", "cost": "free", "url": "https://dependencytrack.org/" },
-      { "title": "OpenSSF: SBOM Everywhere SIG", "type": "guide", "cost": "free", "url": "https://github.com/ossf/sbom-everywhere" }
+      {
+        "title": "SPDX specification",
+        "type": "standard",
+        "cost": "free",
+        "url": "https://spdx.dev/"
+      },
+      {
+        "title": "CycloneDX specification",
+        "type": "standard",
+        "cost": "free",
+        "url": "https://cyclonedx.org/"
+      },
+      {
+        "title": "Syft (SBOM generator for images and filesystems)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://github.com/anchore/syft"
+      },
+      {
+        "title": "Trivy (scans images, filesystems and IaC; emits SBOMs)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://github.com/aquasecurity/trivy"
+      },
+      {
+        "title": "OWASP Dependency-Track",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://dependencytrack.org/"
+      },
+      {
+        "title": "OpenSSF: SBOM Everywhere SIG",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://github.com/ossf/sbom-everywhere"
+      }
     ]
   },
   {
     "areaId": 3,
     "area": "Policy and Decision-Making",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "Consistent, documented OSS adoption decisions protect the organisation from licence conflicts, security risks, and costly reversals when ad hoc choices accumulate over time.",
+      "plain": "Consistent, documented OSS adoption decisions protect the organisation from licence conflicts, security risks, and costly reversals when ad hoc choices accumulate over time. Cloud environments add a second route in: components enter through pipeline configuration and infrastructure-as-code modules, not just application dependencies, and those routes usually get less review.",
       "regulatoryHook": null
     },
     "act": {
-      "1": "Write a one-page checklist: what questions must be answered before adopting a new OSS component? Licence, maintenance status, and security record are the minimum.",
+      "1": "Write a one-page checklist: what questions must be answered before adopting a new OSS component? Licence, maintenance status, and security record are the minimum. Make it explicit that pipeline actions and infrastructure modules count as components.",
       "2": "Circulate the checklist and apply it to one real adoption decision as a pilot, with the owner signing off.",
       "3": "Embed the checklist in procurement templates and new developer onboarding materials so it becomes routine."
     },
     "learn": [
-      { "title": "TODO Group: OSS policy templates", "type": "template", "cost": "free", "url": "https://todogroup.org/resources/policies/" },
-      { "title": "TODO Group: Open source program office guides", "type": "guide", "cost": "free", "url": "https://todogroup.org/resources/guides/" },
-      { "title": "OSPO Alliance: GGI Activity G2 (Policies)", "type": "doc", "cost": "free", "url": "https://ospo-alliance.org/ggi/activities/g2/" }
+      {
+        "title": "TODO Group: OSS policy templates",
+        "type": "template",
+        "cost": "free",
+        "url": "https://todogroup.org/resources/policies/"
+      },
+      {
+        "title": "TODO Group: Open source program office guides",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://todogroup.org/resources/guides/"
+      },
+      {
+        "title": "OSPO Alliance: GGI Activity G2 (Policies)",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://ospo-alliance.org/ggi/activities/g2/"
+      },
+      {
+        "title": "OpenSSF: Security guide for GitHub Actions and CI pipelines",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://github.com/ossf/wg-best-practices-os-developers/blob/main/docs/Concise-Guide-for-Developing-More-Secure-Software.md"
+      }
     ]
   },
   {
     "areaId": 4,
     "area": "Security and Maintenance",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "Unmonitored OSS dependencies are a primary attack surface. Incidents such as Log4Shell demonstrated that organisations without dependency visibility cannot respond quickly when a critical vulnerability is disclosed.",
+      "plain": "Unmonitored OSS dependencies are a primary attack surface. Incidents such as Log4Shell showed that organisations without dependency visibility cannot respond quickly when a critical vulnerability is disclosed. On rented infrastructure there is a second question: which components do you patch, and which does your provider patch? Where that is never written down, components get missed, and an organisation can rate itself higher than the evidence supports by assuming the provider covers something it does not.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA) and NIS2 Directive",
-        "appliesToRoles": ["distributor", "steward"],
-        "plain": "The CRA requires manufacturers to actively monitor for vulnerabilities and provide timely security updates. NIS2 requires essential and important entities to manage security in their supply chains, including OSS dependencies.",
+        "appliesToRoles": [
+          "distributor",
+          "steward"
+        ],
+        "plain": "The CRA requires manufacturers to actively monitor for vulnerabilities and provide timely security updates, with reporting obligations for actively exploited vulnerabilities applying from 11 September 2026. NIS2 requires essential and important entities to manage security in their supply chains, including OSS dependencies, and cloud service providers covered by NIS2 may pass their own supply chain requirements down to customers through contracts.",
         "boundary": "Signpost only. This does not decide whether the CRA or NIS2 applies to you. Confirm with a qualified specialist."
       }
     },
     "act": {
-      "1": "Enable Dependabot or equivalent automated vulnerability alerts on your main repositories today.",
-      "2": "Assign a named triage owner and set a target response time, for example 72 hours for critical advisories.",
-      "3": "Define a vulnerability handling procedure that covers transitive dependencies and test it with a real advisory."
+      "1": "Enable Dependabot or equivalent automated vulnerability alerts on your main repositories today, and switch on image scanning for your base images.",
+      "2": "Assign a named triage owner, set a target response time (for example 72 hours for critical advisories), and write down the managed and self-managed split: for each important component, who patches it, you or the provider?",
+      "3": "Define a vulnerability handling procedure that covers transitive dependencies and scheduled base image rebuilds, and test it with a real advisory."
     },
     "learn": [
-      { "title": "OpenSSF Scorecard", "type": "tool", "cost": "free", "url": "https://securityscorecards.dev/" },
-      { "title": "OSV - Open Source Vulnerability database", "type": "tool", "cost": "free", "url": "https://osv.dev/" },
-      { "title": "OpenSSF: Developing Secure Software (LFD121)", "type": "course", "cost": "free", "url": "https://training.linuxfoundation.org/training/developing-secure-software-lfd121/" },
-      { "title": "GitHub Dependabot documentation", "type": "doc", "cost": "free", "url": "https://docs.github.com/en/code-security/dependabot" },
-      { "title": "CISA: Known Exploited Vulnerabilities Catalogue", "type": "reference", "cost": "free", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" }
+      {
+        "title": "OSV - Open Source Vulnerability database",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://osv.dev/"
+      },
+      {
+        "title": "Grype (vulnerability scanner for images and SBOMs)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://github.com/anchore/grype"
+      },
+      {
+        "title": "Trivy (image, filesystem and IaC scanner)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://github.com/aquasecurity/trivy"
+      },
+      {
+        "title": "OpenSSF Scorecard",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://securityscorecards.dev/"
+      },
+      {
+        "title": "GitHub Dependabot documentation",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://docs.github.com/en/code-security/dependabot"
+      },
+      {
+        "title": "OpenSSF: Developing Secure Software (LFD121)",
+        "type": "course",
+        "cost": "free",
+        "url": "https://training.linuxfoundation.org/training/developing-secure-software-lfd121/"
+      },
+      {
+        "title": "CISA: Known Exploited Vulnerabilities Catalogue",
+        "type": "reference",
+        "cost": "free",
+        "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+      }
     ]
   },
   {
     "areaId": 5,
     "area": "Legal and Licensing Awareness",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "OSS licences carry obligations. Using a GPL-licensed component in a commercial product without understanding the implications can trigger copyleft obligations or breach a customer contract.",
+      "plain": "OSS licences carry obligations. Using a GPL-licensed component in a commercial product without understanding the implications can trigger copyleft obligations or breach a customer contract. Base images carry licences too: if you distribute a container built from a base image you did not create, you may be taking on licensing obligations that have never been reviewed.",
       "regulatoryHook": null
     },
     "act": {
-      "1": "Run a licence scan across your main repositories using a free tool such as REUSE or scancode-toolkit.",
+      "1": "Run a licence scan across your main repositories and your base images using a free tool such as REUSE, scancode-toolkit, or Syft's licence output.",
       "2": "Assign a licence owner and create a short list of accepted, for-review, and rejected licences for your context.",
       "3": "Embed licence checking in your CI pipeline so new components are licence-checked before adoption as routine."
     },
     "learn": [
-      { "title": "OpenChain ISO/IEC 5230 (licence compliance standard)", "type": "standard", "cost": "free", "url": "https://www.openchainproject.org/specification" },
-      { "title": "FSFE REUSE (licence tooling and specification)", "type": "tool", "cost": "free", "url": "https://reuse.software/" },
-      { "title": "ClearlyDefined (licence clarity for OSS components)", "type": "tool", "cost": "free", "url": "https://clearlydefined.io/" },
-      { "title": "SPDX licence list", "type": "reference", "cost": "free", "url": "https://spdx.org/licenses/" },
-      { "title": "Choose a Licence (plain-language licence guide)", "type": "doc", "cost": "free", "url": "https://choosealicense.com/" }
+      {
+        "title": "OpenChain ISO/IEC 5230 (licence compliance standard)",
+        "type": "standard",
+        "cost": "free",
+        "url": "https://www.openchainproject.org/specification"
+      },
+      {
+        "title": "FSFE REUSE (licence tooling and specification)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://reuse.software/"
+      },
+      {
+        "title": "ScanCode toolkit (licence and copyright scanner)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://github.com/aboutcode-org/scancode-toolkit"
+      },
+      {
+        "title": "ClearlyDefined (licence clarity for OSS components)",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://clearlydefined.io/"
+      },
+      {
+        "title": "SPDX licence list",
+        "type": "reference",
+        "cost": "free",
+        "url": "https://spdx.org/licenses/"
+      },
+      {
+        "title": "Choose a Licence (plain-language licence guide)",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://choosealicense.com/"
+      }
     ]
   },
   {
     "areaId": 6,
     "area": "Regulatory Readiness",
-    "lastReviewed": "2026-07-03",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "EU instruments including the Cyber Resilience Act and the NIS2 Directive place obligations on organisations in relation to open source components. The first step is identifying which instruments may apply to your role in the ecosystem.",
+      "plain": "EU instruments including the Cyber Resilience Act and the NIS2 Directive place obligations on organisations in relation to open source components. The first step is identifying which instruments may apply to your role in the ecosystem. For an SME offering a hosted product, the first question is whether the product falls within the scope of the CRA at all, which depends more on how the hosted service forms part of the product than on where the software runs.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
-        "appliesToRoles": ["distributor"],
-        "plain": "Manufacturers and distributors of products with digital elements face obligations under the CRA. Under Article 71 of Regulation (EU) 2024/2847, obligations to report actively exploited vulnerabilities and severe incidents apply from 11 September 2026; the main obligations, including SBOM requirements, apply from 11 December 2027.",
+        "appliesToRoles": [
+          "distributor"
+        ],
+        "plain": "Manufacturers and distributors of products with digital elements face obligations under the CRA. Products with digital elements can include remote data processing where that service is an essential part of the product, so a hosted application may be in scope even if nothing is installed on the customer's device. Under Article 71 of Regulation (EU) 2024/2847, obligations to report actively exploited vulnerabilities and severe incidents apply from 11 September 2026; the main obligations, including SBOM requirements, apply from 11 December 2027.",
         "boundary": "Signpost only. This does not decide whether the CRA applies to you. Confirm with a qualified specialist."
       }
     },
     "act": {
       "1": "Identify which EU instruments may apply to your organisation (CRA, NIS2, AI Act) and log your initial assessment with the date.",
-      "2": "Map your regulatory role: are you a user, distributor, or steward of OSS components or products?",
-      "3": "Track the regulatory timeline (CRA vulnerability reporting from 11 September 2026; main obligations including SBOM from 11 December 2027) and assign ownership of compliance readiness to a named role."
+      "2": "Map your regulatory role: are you a user, distributor, or steward of OSS components or products? If you deliver a hosted product, record your initial view on whether it falls within CRA scope and treat that as an early governance question rather than a late legal one.",
+      "3": "Track the regulatory timeline (CRA vulnerability reporting from 11 September 2026; main obligations including SBOM from 11 December 2027), note any supply chain requirements your cloud providers pass down through contracts, and assign ownership of compliance readiness to a named role."
     },
     "learn": [
-      { "title": "OpenSSF: Cyber Resilience Act resources", "type": "guide", "cost": "free", "url": "https://openssf.org/blog/2024/04/19/cyber-resilience-act-what-you-need-to-know/" },
-      { "title": "ENISA: Cyber Resilience Act overview", "type": "doc", "cost": "free", "url": "https://www.enisa.europa.eu/topics/cyber-resilience-act" },
-      { "title": "Eclipse Foundation: CRA FAQ for open source projects", "type": "doc", "cost": "free", "url": "https://www.eclipse.org/legal/cra-faq.php" },
-      { "title": "Cyber Resilience Act, Regulation (EU) 2024/2847 (EUR-Lex)", "type": "reference", "cost": "free", "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng" },
-      { "title": "NIS2 Directive (EUR-Lex)", "type": "reference", "cost": "free", "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2555" }
+      {
+        "title": "OpenSSF: Cyber Resilience Act resources",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://openssf.org/blog/2024/04/19/cyber-resilience-act-what-you-need-to-know/"
+      },
+      {
+        "title": "ENISA: Cyber Resilience Act overview",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://www.enisa.europa.eu/topics/cyber-resilience-act"
+      },
+      {
+        "title": "Eclipse Foundation: CRA FAQ for open source projects",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://www.eclipse.org/legal/cra-faq.php"
+      },
+      {
+        "title": "Cyber Resilience Act, Regulation (EU) 2024/2847 (EUR-Lex)",
+        "type": "reference",
+        "cost": "free",
+        "url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng"
+      },
+      {
+        "title": "NIS2 Directive (EUR-Lex)",
+        "type": "reference",
+        "cost": "free",
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2555"
+      }
     ]
   },
   {
     "areaId": 7,
     "area": "External Collaboration and Contribution",
-    "lastReviewed": "2026-06-24",
+    "lastReviewed": "2026-09-06",
     "understand": {
-      "plain": "Unmanaged upstream contributions create intellectual property, licence, and reputational risk. Equally, relying on unmaintained OSS projects without engaging with their communities creates long-term maintenance exposure.",
+      "plain": "Unmanaged upstream contributions create intellectual property, licence, and reputational risk. Equally, relying on unmaintained OSS projects without engaging with their communities creates long-term maintenance exposure. Cloud-native teams often carry local changes, such as patched images, forked infrastructure modules and modified pipeline actions; if nobody maintains the link to the upstream project, those changes stay internal and get harder to maintain over time.",
       "regulatoryHook": null
     },
     "act": {
-      "1": "Identify the five OSS projects most critical to your product and assess their community health using CHAOSS metrics or equivalent.",
+      "1": "Identify the five OSS projects most critical to your product, including any base images and infrastructure modules you have forked or patched locally, and assess their community health using CHAOSS metrics or equivalent.",
       "2": "Draft a one-page contribution policy covering who may contribute, to what projects, and under what conditions.",
       "3": "Formalise your contribution approach with Developer Certificate of Origin (DCO) or Contributor Licence Agreement (CLA) guidance and assign an upstream engagement owner."
     },
     "learn": [
-      { "title": "TODO Group: OSS contribution policy templates", "type": "template", "cost": "free", "url": "https://todogroup.org/resources/policies/" },
-      { "title": "CHAOSS: community health metrics", "type": "tool", "cost": "free", "url": "https://chaoss.community/" },
-      { "title": "Developer Certificate of Origin (DCO)", "type": "reference", "cost": "free", "url": "https://developercertificate.org/" },
-      { "title": "Linux Foundation: CLA guidance", "type": "doc", "cost": "free", "url": "https://www.linuxfoundation.org/blog/blog/why-companies-that-use-open-source-need-a-cla-policy" },
-      { "title": "OpenSSF: Understanding OSS project health", "type": "guide", "cost": "free", "url": "https://openssf.org/blog/2023/07/31/understanding-open-source-project-health/" }
+      {
+        "title": "TODO Group: OSS contribution policy templates",
+        "type": "template",
+        "cost": "free",
+        "url": "https://todogroup.org/resources/policies/"
+      },
+      {
+        "title": "CHAOSS: community health metrics",
+        "type": "tool",
+        "cost": "free",
+        "url": "https://chaoss.community/"
+      },
+      {
+        "title": "Developer Certificate of Origin (DCO)",
+        "type": "reference",
+        "cost": "free",
+        "url": "https://developercertificate.org/"
+      },
+      {
+        "title": "Linux Foundation: CLA guidance",
+        "type": "doc",
+        "cost": "free",
+        "url": "https://www.linuxfoundation.org/blog/blog/why-companies-that-use-open-source-need-a-cla-policy"
+      },
+      {
+        "title": "OpenSSF: Understanding OSS project health",
+        "type": "guide",
+        "cost": "free",
+        "url": "https://openssf.org/blog/2023/07/31/understanding-open-source-project-health/"
+      }
     ]
   }
 ]

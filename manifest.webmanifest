@@ -1,16 +1,12 @@
 {
-  "name": "OSS Governance Diagnostic",
+  "name": "Lightweight Open Source Governance Diagnostic",
   "short_name": "OSS Diagnostic",
-  "description": "Self-assessment tool for open source software governance in European SMEs.",
+  "description": "Self-assessment tool for open source governance in European SMEs, built for cloud-native stacks.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#f8f9fa",
-  "theme_color": "#1a3a5c",
+  "background_color": "#ffffff",
+  "theme_color": "#64bc46",
   "icons": [
-    {
-      "src": "icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    }
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
