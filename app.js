@@ -790,8 +790,14 @@ async function init() {
   loadState();
   state.resources = await loadResources();
 
-  /* Register service worker for offline support */
+  /* Register service worker for offline support. When a new build takes over
+     from an older worker, reload once so the practitioner sees the current
+     version rather than whatever the previous worker had cached. */
   if ('serviceWorker' in navigator) {
+    let hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hadController) { hadController = false; window.location.reload(); }
+    });
     navigator.serviceWorker.register('sw.js').catch(() => { /* non-fatal */ });
   }
 
