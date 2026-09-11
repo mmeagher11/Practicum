@@ -293,16 +293,16 @@ function buildAreaCard(area) {
           value="${esc(areaState.owner)}" maxlength="120"
           autocomplete="off">
       </div>
-      <fieldset class="input-group delivery-group">
-        <legend>Who runs the components this area covers?</legend>
-        <div class="delivery-options">
+      <div class="input-group delivery-group">
+        <div class="group-label" id="area-${area.id}-delivery-legend">Who runs the components this area covers?</div>
+        <div class="delivery-options" role="radiogroup" aria-labelledby="area-${area.id}-delivery-legend">
           ${DELIVERY_MODELS.map(d => `
             <label class="delivery-option${areaState.delivery === d.id ? ' selected' : ''}" title="${esc(d.desc)}">
               <input type="radio" name="area-${area.id}-delivery" value="${d.id}"${areaState.delivery === d.id ? ' checked' : ''}>
               <span>${esc(d.label)}</span>
             </label>`).join('')}
         </div>
-      </fieldset>
+      </div>
     </div>
 
     <div class="level-selector">

@@ -103,7 +103,7 @@
   {
     "areaId": 3,
     "area": "Policy and Decision-Making",
-    "lastReviewed": "2026-09-06",
+    "lastReviewed": "2026-09-11",
     "understand": {
       "plain": "Consistent, documented OSS adoption decisions protect the organisation from licence conflicts, security risks, and costly reversals when ad hoc choices accumulate over time. Cloud environments add a second route in: components enter through pipeline configuration and infrastructure-as-code modules, not just application dependencies, and those routes usually get less review.",
       "regulatoryHook": null
@@ -118,7 +118,7 @@
         "title": "TODO Group: OSS policy templates",
         "type": "template",
         "cost": "free",
-        "url": "https://todogroup.org/resources/policies/"
+        "url": "https://github.com/todogroup/policies"
       },
       {
         "title": "TODO Group: Open source program office guides",
@@ -314,7 +314,7 @@
   {
     "areaId": 7,
     "area": "External Collaboration and Contribution",
-    "lastReviewed": "2026-09-06",
+    "lastReviewed": "2026-09-11",
     "understand": {
       "plain": "Unmanaged upstream contributions create intellectual property, licence, and reputational risk. Equally, relying on unmaintained OSS projects without engaging with their communities creates long-term maintenance exposure. Cloud-native teams often carry local changes, such as patched images, forked infrastructure modules and modified pipeline actions; if nobody maintains the link to the upstream project, those changes stay internal and get harder to maintain over time.",
       "regulatoryHook": null
@@ -322,38 +322,32 @@
     "act": {
       "1": "Identify the five OSS projects most critical to your product, including any base images and infrastructure modules you have forked or patched locally, and assess their community health using CHAOSS metrics or equivalent.",
       "2": "Draft a one-page contribution policy covering who may contribute, to what projects, and under what conditions.",
-      "3": "Formalise your contribution approach with Developer Certificate of Origin (DCO) or Contributor Licence Agreement (CLA) guidance and assign an upstream engagement owner."
+      "3": "Formalise your contribution approach with clear contributor agreement guidance, including a Contributor Licence Agreement (CLA) where one is needed, and assign an upstream engagement owner."
     },
     "learn": [
       {
         "title": "TODO Group: OSS contribution policy templates",
         "type": "template",
         "cost": "free",
-        "url": "https://todogroup.org/resources/policies/"
+        "url": "https://github.com/todogroup/policies"
       },
       {
         "title": "CHAOSS: community health metrics",
         "type": "tool",
         "cost": "free",
-        "url": "https://chaoss.community/"
+        "url": "https://www.chaoss.community/kb/metrics-model-starter-project-health/"
       },
       {
-        "title": "Developer Certificate of Origin (DCO)",
-        "type": "reference",
-        "cost": "free",
-        "url": "https://developercertificate.org/"
-      },
-      {
-        "title": "Linux Foundation: CLA guidance",
+        "title": "Guidance on Contributor Licence Agreements (CLAs)",
         "type": "doc",
         "cost": "free",
-        "url": "https://www.linuxfoundation.org/blog/blog/why-companies-that-use-open-source-need-a-cla-policy"
+        "url": "https://opensource.guide/legal/"
       },
       {
         "title": "OpenSSF: Understanding OSS project health",
         "type": "guide",
         "cost": "free",
-        "url": "https://openssf.org/blog/2023/07/31/understanding-open-source-project-health/"
+        "url": "https://openssf.org/blog/2024/03/05/openssf-scorecard-evaluating-and-improving-the-health-of-critical-oss-projects/"
       }
     ]
   }
