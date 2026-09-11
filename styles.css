@@ -358,7 +358,7 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 720px) { .area-inputs { grid-template-columns: 1fr; } }
 .input-group { display: flex; flex-direction: column; gap: .35rem; border: 0; min-width: 0; }
 .input-group-wide { grid-column: 1 / -1; }
-.input-group label, .input-group legend, .input-group .group-label {
+.input-group > label, .input-group > legend, .input-group > .group-label {
   font-size: .85rem;
   font-weight: 700;
   color: var(--near-black);
@@ -704,7 +704,7 @@ p:last-child { margin-bottom: 0; }
   .area-prompt { font-size: 7.5pt; padding: 2mm 3mm 0; }
 
   .area-inputs { grid-template-columns: 1fr 1fr; gap: 2mm; padding: 2mm 3mm; }
-  .input-group label, .input-group legend, .input-group .group-label { font-size: 7pt; }
+  .input-group > label, .input-group > legend, .input-group > .group-label { font-size: 7pt; }
   .text-input { border: 1pt solid #ccc; background: #fff; font-size: 7.5pt; padding: 1mm 2mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .delivery-option { font-size: 7pt; padding: 1mm 2mm; border-width: 1pt; }
   .delivery-option.selected { background: #e8f6e3; border-color: #64bc46; }
