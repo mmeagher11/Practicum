@@ -125,7 +125,8 @@ h5::before { content: ''; display: inline-block; width: .6rem; height: 3px; back
 
 p  { margin-bottom: .75rem; }
 p:last-child { margin-bottom: 0; }
-.section-lede { max-width: 70ch; color: var(--ink-80); margin-bottom: 1.5rem; }
+.section-lede { max-width: 70ch; color: var(--ink-80); margin-bottom: .85rem; }
+.section-lede:last-of-type { margin-bottom: 1.5rem; }
 
 /* ---- Layout ---- */
 .container {
@@ -214,7 +215,8 @@ p:last-child { margin-bottom: 0; }
 }
 .intro-content { max-width: 880px; }
 .intro-content h1 { margin-bottom: 1rem; max-width: 18ch; }
-.lede { font-size: 1.1rem; color: var(--ink-80); max-width: 68ch; margin-bottom: 1.75rem; }
+.lede { font-size: 1.1rem; color: var(--ink-80); max-width: 68ch; margin-bottom: 1rem; }
+.lede:last-of-type { margin-bottom: 1.75rem; }
 .intro-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

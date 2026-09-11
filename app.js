@@ -1,7 +1,8 @@
 /* Lightweight Open Source Governance Diagnostic - app.js
    Vanilla JS, no frameworks, no runtime network calls. All rendering via the DOM API
    plus innerHTML for static markup. State is held in a module-level object and
-   persisted to localStorage. Mirrors Meagher (2026) v2.5. */
+   persisted to localStorage. Maturity model follows Meagher (2026) v2.6 Appendix A;
+   on-screen copy is worded in plain language for practitioner use. */
 'use strict';
 
 /* ---- State ---- */
@@ -136,31 +137,32 @@ function buildIntro() {
         <p class="eyebrow">Self-assessment for European SMEs</p>
         <h1>Know where your <span class="os">open source</span> governance stands<span class="os">.</span></h1>
         <p class="lede">
-          Most European SMEs run on open source software, and increasingly they consume it through
-          the cloud: base container images, managed platform services, CI/CD pipelines, and
-          infrastructure defined as code. Most govern none of it. The Cyber Resilience Act and NIS2
-          have put a clock on that. This Diagnostic helps a founder, CTO, or operations lead work out
-          where governance currently sits across seven capability areas, who owns it or should, and
-          what the single most immediate next step looks like.
+          Most European SMEs rely on open source software, often through cloud services, container
+          images, CI/CD pipelines and infrastructure as code. But many do not have clear ownership,
+          records or processes for managing it.
+        </p>
+        <p class="lede">
+          The Cyber Resilience Act (CRA) and NIS2 make this more important. This Diagnostic helps you
+          see where you stand across seven areas, who is responsible, and what you should do next.
         </p>
         <div class="intro-grid">
           <div class="intro-point">
             <h3>Ownership first</h3>
-            <p>Each area asks who is responsible before it asks how mature you are. Naming an owner is the foundational governance act.</p>
+            <p>Each area asks who is responsible before it asks how mature your organisation is. Clear ownership is the starting point for good governance.</p>
           </div>
           <div class="intro-point">
-            <h3>Built for cloud-native stacks</h3>
-            <p>Where a component is consumed as a managed service, note who patches it: you or the provider. The answers change with that split.</p>
+            <h3>Built for cloud-based systems</h3>
+            <p>If you use managed services, the Diagnostic asks who is responsible for each component: your organisation, the provider, or both.</p>
           </div>
           <div class="intro-point">
-            <h3>Nothing leaves your machine</h3>
-            <p>No accounts, no server, no analytics. Answers save in your browser, export to CSV or JSON, and print to the A3 worksheet.</p>
+            <h3>Your data stays with you</h3>
+            <p>There are no accounts and no server-side storage. Your answers stay in your browser. You can export them as CSV or JSON, or print the A3 worksheet.</p>
           </div>
         </div>
         <div class="disclaimer">
-          <strong>This is a self-assessment, not legal advice.</strong> It does not determine whether any
-          specific EU regulation applies to your organisation. Where regulatory exposure is signposted,
-          for example a copyleft question or a possible CRA obligation, take it to a qualified specialist.
+          <strong>This is a self-assessment, not legal advice.</strong> It does not decide whether the
+          CRA, NIS2 or another EU regulation applies to your organisation. If the Diagnostic identifies
+          a possible legal or regulatory issue, seek advice from a qualified specialist.
         </div>
         ${!state.started
           ? `<div class="intro-actions no-print">
@@ -189,17 +191,17 @@ const ROLES = [
   {
     id: 'user',
     label: 'User',
-    desc: 'We use OSS components in our products or operations, including through cloud services, but do not distribute or publish them externally.'
+    desc: 'We use open source software in our products or operations, including through cloud services, but we do not distribute or publish it externally.'
   },
   {
     id: 'contributor',
     label: 'Contributor',
-    desc: 'We contribute code, documentation, or resources to upstream OSS projects.'
+    desc: 'We contribute code, documentation or other resources to the open source projects we use.'
   },
   {
     id: 'steward',
     label: 'Steward',
-    desc: 'We maintain or govern OSS projects as a community service or part of our mission.'
+    desc: 'We maintain or govern open source projects, as a community service or as part of our mission.'
   },
   {
     id: 'distributor',
@@ -216,9 +218,10 @@ function buildRoleSelector() {
     <div class="container">
       <p class="eyebrow">Step 1 of 3</p>
       <h2>Your organisation's role</h2>
-      <p class="section-lede">Select the option that best describes your relationship with the open source you use.
-         This decides which regulatory context appears in the guidance panels, and nothing else.
-         Most SMEs do not know which of these roles they occupy in regulatory terms; picking one here is a first step, not a determination.</p>
+      <p class="section-lede">Choose the option that best describes how your organisation uses or engages with
+         open source software. This helps tailor the guidance you see later.</p>
+      <p class="section-lede">You do not need to know your exact legal or regulatory status at this stage.
+         Choose the closest fit.</p>
       <div class="role-grid">
         ${ROLES.map(r => `
           <label class="role-card${state.role === r.id ? ' selected' : ''}">
@@ -256,9 +259,10 @@ function buildMatrix() {
   container.innerHTML = `
     <p class="eyebrow">Step 2 of 3</p>
     <h2>Capability assessment</h2>
-    <p class="section-lede">For each of the seven areas, name an owner (even an informal one), note who runs the
-      components involved, mark your current level, and record the single most immediate next action.
-      Rate where the organisation is, not where it would like to be.</p>`;
+    <p class="section-lede">Work through each of the seven areas below. Name who is responsible, note whether
+      you or a provider runs the components involved, choose the level that best describes where you are
+      today, and record one action to take next.</p>
+    <p class="section-lede">Choose where you are now, not where you would like to be.</p>`;
 
   AREAS.forEach(area => container.appendChild(buildAreaCard(area)));
 
@@ -287,14 +291,14 @@ function buildAreaCard(area) {
 
     <div class="area-inputs area-inputs-top">
       <div class="input-group">
-        <label for="area-${area.id}-owner">Owner or responsible role <span class="label-hint">(name the current owner, even if informal)</span></label>
+        <label for="area-${area.id}-owner">Who is responsible? <span class="label-hint">(name the current owner, even if the role is informal)</span></label>
         <input type="text" id="area-${area.id}-owner" class="text-input"
           placeholder="e.g. CTO, Head of Engineering, Tech Lead"
           value="${esc(areaState.owner)}" maxlength="120"
           autocomplete="off">
       </div>
       <div class="input-group delivery-group">
-        <div class="group-label" id="area-${area.id}-delivery-legend">Who runs the components this area covers?</div>
+        <div class="group-label" id="area-${area.id}-delivery-legend">Who is responsible for running these components?</div>
         <div class="delivery-options" role="radiogroup" aria-labelledby="area-${area.id}-delivery-legend">
           ${DELIVERY_MODELS.map(d => `
             <label class="delivery-option${areaState.delivery === d.id ? ' selected' : ''}" title="${esc(d.desc)}">
@@ -324,9 +328,9 @@ function buildAreaCard(area) {
 
     <div class="area-inputs">
       <div class="input-group input-group-wide">
-        <label for="area-${area.id}-action">Single most immediate next action</label>
+        <label for="area-${area.id}-action">What should you do next?</label>
         <input type="text" id="area-${area.id}-action" class="text-input"
-          placeholder="The one concrete thing to do next from your current level"
+          placeholder="Enter one practical action to take next."
           value="${esc(areaState.nextAction)}" maxlength="240"
           autocomplete="off">
       </div>
@@ -500,10 +504,9 @@ function summaryHTML() {
     <div class="summary-headline ${ownerNamed ? 'headline-ok' : 'headline-alert'}" role="status">
       <span class="headline-icon" aria-hidden="true">${ownerNamed ? '&#10003;' : '!'}</span>
       <span>
-        Has an owner been named for open source governance overall?
         ${ownerNamed
-          ? ` <strong>Yes</strong> (${esc(state.areas[1].owner)}). That is the single most consequential outcome of a first pass.`
-          : ' <strong>Not yet.</strong> Enter an owner in Internal Ownership above, even an interim one. Nothing else in this assessment works without it.'}
+          ? `An overall owner has been named: <strong>${esc(state.areas[1].owner)}</strong>. That is the most useful thing to come out of a first pass.`
+          : 'No overall owner has been named yet. Add one in Internal Ownership, even if it is only an interim owner. This is the first step in putting the other areas in place.'}
       </span>
     </div>
 
@@ -528,8 +531,8 @@ function summaryHTML() {
 
     ${highRiskLow.length > 0 ? `
       <div class="summary-block summary-block-alert">
-        <h3>Prioritised: high-risk areas at Level 1 or 2</h3>
-        <p class="summary-note">These carry the most immediate CRA and NIS2 exposure and should come first.</p>
+        <h3>Start here: high-risk areas at Level 1 or 2</h3>
+        <p class="summary-note">Start with these areas. They are the most likely to create immediate CRA or NIS2 risk.</p>
         <ul class="summary-list">
           ${highRiskLow.map(a => `
             <li class="summary-list-item alert">
@@ -553,8 +556,8 @@ function summaryHTML() {
 
     ${count > 0 ? `
       <div class="summary-block">
-        <h3>Target: Level ${TARGET_LEVEL} in Security and Licensing before the relevant CRA / NIS2 obligations activate</h3>
-        <p class="summary-note">A design threshold argued from the regulatory timeline, not a level required by any framework. Reaching it in the two highest-risk areas is the minimum viable governance posture worth targeting first.</p>
+        <h3>Priority target: reach Level ${TARGET_LEVEL} in Security and Licensing</h3>
+        <p class="summary-note">These are the two highest-risk areas. Aim to have clear ownership and a basic working process in place before relevant CRA or NIS2 requirements apply to your organisation. Level ${TARGET_LEVEL} is a target argued from the regulatory timeline, not a level required by any framework.</p>
         <ul class="summary-list">
           ${targetRows.map(t => `
             <li class="summary-list-item${t.met ? ' ok' : (t.lvl ? ' alert' : '')}">
@@ -567,12 +570,12 @@ function summaryHTML() {
       </div>
 
       <div class="summary-block">
-        <h3>Managed and self-managed split</h3>
+        <h3>Who runs your components</h3>
         <p class="summary-note">
           Recorded for ${deliveryRecorded} of ${total} areas.
           ${deliveryRecorded < total
-            ? 'From Level 3 onwards this decides who is responsible when a vulnerability or advisory appears; assuming the provider covers something it does not is the most common way a self-assessment overstates maturity.'
-            : 'Good. Check the Security and Maintenance answer against it: does someone know who patches each important component?'}
+            ? 'For each area, record whether your organisation, your provider, or both are responsible. Do not assume the provider handles something unless you have confirmed it. This is especially important for security updates and vulnerability management.'
+            : 'All areas recorded. Check this against your Security and Maintenance answer: does someone know who patches each important component?'}
         </p>
       </div>` : ''}
 
@@ -622,9 +625,11 @@ function buildExportControls() {
 }
 
 /* ---- Export: JSON ---- */
+/* Exports use the self-standing wording, not the form label: "We are" makes
+   sense under the question on screen but not as a cell in a CSV. */
 function deliveryLabel(id) {
   const d = DELIVERY_MODELS.find(x => x.id === id);
-  return d ? d.label : '';
+  return d ? (d.exportLabel || d.label) : '';
 }
 
 function exportJSON() {
