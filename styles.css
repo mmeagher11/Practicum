@@ -310,6 +310,8 @@ p:last-child { margin-bottom: 0; }
   border-bottom: 1px solid var(--ink-20);
 }
 .area-title { display: flex; align-items: center; gap: .7rem; }
+.area-title-text { min-width: 0; }
+.area-formal { margin: .1rem 0 0; font-size: .78rem; color: var(--ink-80); }
 .area-number {
   display: inline-flex;
   align-items: center;
@@ -331,6 +333,13 @@ p:last-child { margin-bottom: 0; }
   font-size: .95rem;
   max-width: 80ch;
 }
+.area-help {
+  padding: .35rem 1.25rem 0;
+  color: var(--ink-80);
+  font-size: .85rem;
+  max-width: 80ch;
+}
+.area-inputs-single { grid-template-columns: 1fr; }
 
 /* ---- Risk badges ---- */
 .risk-badge {
@@ -704,6 +713,8 @@ p:last-child { margin-bottom: 0; }
   .area-number { width: 14pt; height: 14pt; font-size: 7pt; }
   .risk-badge { font-size: 6pt; padding: 1pt 4pt; }
   .area-prompt { font-size: 7.5pt; padding: 2mm 3mm 0; }
+  .area-formal { font-size: 6pt; }
+  .area-help { font-size: 6.5pt; padding: 1mm 3mm 0; }
 
   .area-inputs { grid-template-columns: 1fr 1fr; gap: 2mm; padding: 2mm 3mm; }
   .input-group > label, .input-group > legend, .input-group > .group-label { font-size: 7pt; }
@@ -721,7 +732,10 @@ p:last-child { margin-bottom: 0; }
   .level-title { font-size: 6pt; }
   .level-desc { font-size: 6.5pt; }
 
-  .remediation-panel { max-height: none !important; opacity: 1 !important; border-top: 1pt solid #ddd; page-break-inside: avoid; }
+  .remediation-panel.visible { max-height: none !important; opacity: 1 !important; border-top: 1pt solid #ddd; page-break-inside: avoid; }
+  /* An area with no level chosen has no guidance to show: printing the heading
+     over an empty body is what made the worksheet look truncated. */
+  .remediation-panel:not(.visible) { display: none !important; }
   .remediation-inner { background: #f6faf4; padding: 2mm 3mm; }
   .remediation-body { grid-template-columns: 1fr 1fr 1fr; gap: 2mm; }
   .rem-understand, .rem-act, .rem-learn { border: 1pt solid #ddd; padding: 2mm; break-inside: avoid; }

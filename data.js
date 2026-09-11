@@ -1,8 +1,12 @@
 /* Lightweight Open Source Governance Diagnostic - capability area definitions.
    Maturity model follows Appendix A of Meagher (2026) v2.6 (cloud-native framing).
-   Level names are unchanged; area questions and level descriptors are worded in
-   plain language for practitioner use. Edit this file to update area names,
-   descriptors, or risk levels. */
+   Level names and the five-level structure are unchanged; area names, questions and
+   level descriptors are worded in plain language for practitioner use. Where an area
+   is shown under a plainer name, `formalName` carries the capability name used in the
+   paper so the two can be reconciled. `help` is optional secondary text under the
+   question. `delivery: false` suppresses the "who runs these components" question for
+   areas where it does not apply. Edit this file to update area names, descriptors,
+   or risk levels. */
 
 const MATURITY_LEVELS = {
   1: 'Unaware',
@@ -28,12 +32,13 @@ const AREAS = [
     id: 1,
     name: 'Internal Ownership',
     risk: 'foundational',
-    prompt: 'Is someone clearly responsible for open source decisions across your software, including application code, base images, pipelines and managed services?',
+    prompt: 'Is someone clearly responsible for how your organisation uses and manages open source software?',
+    help: 'This can include application code, container images, pipelines and managed services.',
     levels: {
-      1: 'No one is responsible. Open source choices are made in the code, by default.',
-      2: 'People accept that someone should own this, but no one does yet.',
+      1: 'No one is responsible. Developers make open source decisions as they arise.',
+      2: 'People know someone should be responsible, but no owner has been named.',
       3: 'A named person or role is responsible, even if informally.',
-      4: 'The owner has a defined remit covering application code, images and pipelines, and is consulted on open source decisions as a matter of routine.',
+      4: 'The owner has clear responsibilities covering application code, images and pipelines, and is routinely involved in open source decisions.',
       5: 'Ownership is written into role definitions and survives staff changes.'
     }
   },
@@ -41,7 +46,7 @@ const AREAS = [
     id: 2,
     name: 'Software Visibility',
     risk: 'high',
-    prompt: 'Do you have an up-to-date record of the open source software you use, including application dependencies, base images, sidecars, pipeline actions and infrastructure-as-code modules?',
+    prompt: 'Do you have an up-to-date record of the open source software you use, including dependencies, base images, pipeline actions and infrastructure-as-code modules?',
     levels: {
       1: 'There is no record of the open source software in use, in the application or in the images and pipelines beneath it.',
       2: 'Developers roughly know what is being used, but there is no reliable record.',
@@ -52,7 +57,8 @@ const AREAS = [
   },
   {
     id: 3,
-    name: 'Policy and Decision-Making',
+    name: 'Open Source Policy and Decisions',
+    formalName: 'Policy and Decision-Making',
     risk: 'medium',
     prompt: 'Do you have a clear process for deciding which open source software can be used, including components introduced through pipelines and infrastructure as code?',
     levels: {
@@ -60,62 +66,73 @@ const AREAS = [
       2: 'Some informal rules exist, but they are not written down.',
       3: 'A short checklist or policy is used when adopting new open source software.',
       4: 'The checklist or policy is applied consistently and reviewed by the owner.',
-      5: 'The same decision criteria are built into procurement and into onboarding for new staff.'
+      5: 'The same rules are used in procurement and included in staff onboarding.'
     }
   },
   {
     id: 4,
     name: 'Security and Maintenance',
     risk: 'high',
-    prompt: 'Do you monitor open source dependencies for vulnerabilities, decide when they need to be patched, and know which components you maintain and which your provider maintains?',
+    prompt: "Do you monitor your open source software for vulnerabilities, know when it needs to be patched, and know which updates are your responsibility and which are your provider's?",
     levels: {
       1: 'No one monitors open source dependencies for vulnerabilities.',
       2: 'Alerts may be enabled, but nobody clearly owns the response and it is not clear what you patch versus what the provider patches.',
       3: "A named owner reviews alerts, a target response time is set, and the split between your responsibilities and the provider's is documented.",
-      4: 'Vulnerability handling follows a defined process, including transitive dependencies and base image rebuilds.',
+      4: 'Vulnerability handling follows a defined process. It also covers dependencies used by other dependencies (transitive dependencies) and rebuilding affected base images.',
       5: 'Monitoring is continuous, critical advisories have agreed response times, and the process is reviewed regularly.'
     }
   },
   {
     id: 5,
-    name: 'Legal and Licensing Awareness',
+    name: 'Open Source Licensing',
+    formalName: 'Legal and Licensing Awareness',
     risk: 'high',
-    prompt: 'Do you know the licence conditions of the open source software you use and distribute, including software inside base images?',
+    prompt: 'Do you know the licence requirements of the open source software you use or distribute, including software contained in base images?',
     levels: {
-      1: 'The licence conditions of the open source software in use are unknown.',
+      1: 'The licence requirements of the open source software in use are unknown.',
       2: 'There is some awareness of open source licences, but no regular checks before software is adopted.',
       3: 'A basic licence check is carried out when new open source software is introduced.',
       4: 'Licence checks happen as a matter of routine before adoption, and a named person owns licence questions.',
-      5: 'Licence compliance is managed systematically and can be demonstrated when needed, for example through ISO/IEC 5230-aligned processes.'
+      5: 'Licence compliance is managed consistently and can be demonstrated when needed, for example through processes aligned with ISO/IEC 5230.'
     }
   },
   {
     id: 6,
     name: 'Regulatory Readiness',
     risk: 'medium',
-    prompt: 'Do you know which EU rules may apply to your use of open source software, including whether your product could fall within the Cyber Resilience Act (CRA)?',
+    /* No delivery question: which EU rules apply is a question about the
+       organisation and its products, not about who runs a given component. */
+    delivery: false,
+    prompt: 'Do you know which EU rules may apply to your organisation or products, including the Cyber Resilience Act (CRA) and NIS2?',
     levels: {
       1: 'The organisation does not know which EU rules may apply.',
       2: 'There is some awareness of the CRA or NIS2, but no assessment has been carried out.',
-      3: 'The organisation has identified its likely regulatory role and checked whether its products may fall within CRA scope.',
+      3: 'The organisation has checked which regulations may apply and whether any of its products may fall within CRA scope.',
       4: 'Relevant obligations are documented and tracked against regulatory deadlines.',
-      5: 'Regulatory responsibilities are reviewed regularly as requirements change.'
+      5: 'Regulatory responsibilities are reviewed regularly and updated when requirements change.'
     }
   },
   {
     id: 7,
-    name: 'External Collaboration and Contribution',
+    name: 'Working with Open Source Projects',
+    formalName: 'External Collaboration and Contribution',
     risk: 'lower',
-    prompt: 'Do you manage how your organisation contributes to and works with the open source projects it depends on, including any forks, patched images or modified pipeline actions you maintain?',
+    prompt: 'Does your organisation manage how employees contribute to and work with the open source projects you depend on?',
+    help: 'This can include contributions, forks, patched images and changes you maintain locally.',
     levels: {
-      1: 'There is no clear view of the health of key upstream projects, and external contributions are not managed.',
+      1: 'The organisation does not track the health of important upstream projects or manage external contributions.',
       2: 'Employees may contribute to open source projects, but there is no clear policy.',
       3: 'A basic contribution policy exists and the key upstream projects the organisation depends on are known.',
       4: 'Contribution and engagement with open source communities follow a defined process.',
-      5: 'The organisation actively manages its upstream relationships and contributes under clear policies.'
+      5: 'The organisation actively manages important upstream relationships and contributes under clear policies.'
     }
   }
 ];
+
+/* True when an area asks who runs the components it covers. */
+function areaHasDelivery(area) {
+  return area.delivery !== false;
+}
 
 /* The design target stated in Appendix A and Section 4: Level 3 in the
    high-risk areas before the relevant CRA / NIS2 obligations activate. */

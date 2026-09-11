@@ -44,9 +44,11 @@ function loadState() {
     }
   } catch (_) { /* start fresh */ }
 
-  /* Guarantee every area has a complete entry (older saves lack delivery) */
+  /* Guarantee every area has a complete entry (older saves lack delivery), and
+     clear any delivery value stored against an area that no longer asks for one. */
   AREAS.forEach(a => {
     state.areas[a.id] = Object.assign(emptyArea(), state.areas[a.id] || {});
+    if (!areaHasDelivery(a)) state.areas[a.id].delivery = null;
   });
 }
 
@@ -282,14 +284,18 @@ function buildAreaCard(area) {
     <div class="area-header">
       <div class="area-title">
         <span class="area-number" aria-hidden="true">${area.id}</span>
-        <h3>${greenOS(area.name)}</h3>
+        <div class="area-title-text">
+          <h3>${greenOS(area.name)}</h3>
+          ${area.formalName ? `<p class="area-formal">${esc(area.formalName)}</p>` : ''}
+        </div>
       </div>
       <span class="risk-badge risk-${area.risk}">${esc(RISK_LABELS[area.risk] || area.risk)}</span>
     </div>
 
     <p class="area-prompt">${esc(area.prompt)}</p>
+    ${area.help ? `<p class="area-help">${esc(area.help)}</p>` : ''}
 
-    <div class="area-inputs area-inputs-top">
+    <div class="area-inputs area-inputs-top${areaHasDelivery(area) ? '' : ' area-inputs-single'}">
       <div class="input-group">
         <label for="area-${area.id}-owner">Who is responsible? <span class="label-hint">(name the current owner, even if the role is informal)</span></label>
         <input type="text" id="area-${area.id}-owner" class="text-input"
@@ -297,6 +303,7 @@ function buildAreaCard(area) {
           value="${esc(areaState.owner)}" maxlength="120"
           autocomplete="off">
       </div>
+      ${areaHasDelivery(area) ? `
       <div class="input-group delivery-group">
         <div class="group-label" id="area-${area.id}-delivery-legend">Who is responsible for running these components?</div>
         <div class="delivery-options" role="radiogroup" aria-labelledby="area-${area.id}-delivery-legend">
@@ -306,7 +313,7 @@ function buildAreaCard(area) {
               <span>${esc(d.label)}</span>
             </label>`).join('')}
         </div>
-      </div>
+      </div>` : ''}
     </div>
 
     <div class="level-selector">
@@ -365,7 +372,7 @@ function buildAreaCard(area) {
     });
   });
 
-  /* Delivery model selection */
+  /* Delivery model selection (absent on areas where the question does not apply) */
   card.querySelectorAll(`input[name="area-${area.id}-delivery"]`).forEach(input => {
     input.addEventListener('change', () => {
       state.areas[area.id].delivery = input.value;
@@ -485,9 +492,11 @@ function summaryHTML() {
   /* Headline: Area 1 (Internal Ownership) owner */
   const ownerNamed = (state.areas[1]?.owner || '').trim().length > 0;
 
-  /* Ownership coverage and delivery split across all areas */
+  /* Ownership coverage across all areas; delivery only where the area asks for it */
   const ownersNamed = AREAS.filter(a => (state.areas[a.id]?.owner || '').trim().length > 0).length;
-  const deliveryRecorded = AREAS.filter(a => state.areas[a.id]?.delivery).length;
+  const deliveryAreas = AREAS.filter(areaHasDelivery);
+  const deliveryTotal = deliveryAreas.length;
+  const deliveryRecorded = deliveryAreas.filter(a => state.areas[a.id]?.delivery).length;
 
   /* Target: Level 3 in Security and Licensing before CRA / NIS2 obligations activate */
   const targetRows = TARGET_AREAS.map(id => {
@@ -521,7 +530,7 @@ function summaryHTML() {
       </div>
       <div class="summary-stat">
         <div class="stat-value${highRiskLow.length > 0 ? ' stat-alert' : ''}">${highRiskLow.length}</div>
-        <div class="stat-label">High-risk areas at Level 1 or 2</div>
+        <div class="stat-label">High-risk areas needing attention</div>
       </div>
       <div class="summary-stat">
         <div class="stat-value">${ownersNamed}&thinsp;/&thinsp;${total}</div>
@@ -531,7 +540,7 @@ function summaryHTML() {
 
     ${highRiskLow.length > 0 ? `
       <div class="summary-block summary-block-alert">
-        <h3>Start here: high-risk areas at Level 1 or 2</h3>
+        <h3>High-risk areas needing attention</h3>
         <p class="summary-note">Start with these areas. They are the most likely to create immediate CRA or NIS2 risk.</p>
         <ul class="summary-list">
           ${highRiskLow.map(a => `
@@ -557,7 +566,7 @@ function summaryHTML() {
     ${count > 0 ? `
       <div class="summary-block">
         <h3>Priority target: reach Level ${TARGET_LEVEL} in Security and Licensing</h3>
-        <p class="summary-note">These are the two highest-risk areas. Aim to have clear ownership and a basic working process in place before relevant CRA or NIS2 requirements apply to your organisation. Level ${TARGET_LEVEL} is a target argued from the regulatory timeline, not a level required by any framework.</p>
+        <p class="summary-note">These are the two highest-risk areas. Aim to have clear ownership and a basic working process in place before relevant CRA or NIS2 requirements apply to your organisation. Level ${TARGET_LEVEL} is a recommended target for this Diagnostic. It is not a legal requirement or a maturity level required by the CRA or NIS2.</p>
         <ul class="summary-list">
           ${targetRows.map(t => `
             <li class="summary-list-item${t.met ? ' ok' : (t.lvl ? ' alert' : '')}">
@@ -572,8 +581,8 @@ function summaryHTML() {
       <div class="summary-block">
         <h3>Who runs your components</h3>
         <p class="summary-note">
-          Recorded for ${deliveryRecorded} of ${total} areas.
-          ${deliveryRecorded < total
+          Recorded for ${deliveryRecorded} of ${deliveryTotal} areas.
+          ${deliveryRecorded < deliveryTotal
             ? 'For each area, record whether your organisation, your provider, or both are responsible. Do not assume the provider handles something unless you have confirmed it. This is especially important for security updates and vulnerability management.'
             : 'All areas recorded. Check this against your Security and Maintenance answer: does someone know who patches each important component?'}
         </p>
@@ -641,6 +650,7 @@ function exportJSON() {
     areas: AREAS.map(area => ({
       id:            area.id,
       name:          area.name,
+      formalName:    area.formalName || area.name,
       risk:          area.risk,
       level:         state.areas[area.id]?.level  ?? null,
       levelLabel:    state.areas[area.id]?.level  != null

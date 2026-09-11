@@ -44,9 +44,9 @@
   {
     "areaId": 2,
     "area": "Software Visibility",
-    "lastReviewed": "2026-09-06",
+    "lastReviewed": "2026-09-11",
     "understand": {
-      "plain": "If you cannot list what open source is in your stack, you cannot answer a customer security questionnaire, patch a known vulnerability with confidence, or produce a software bill of materials (SBOM). A dependency file shows the application libraries; it does not show the base image underneath, the sidecars added at deployment, the pipeline actions, or the open source engines behind your managed services.",
+      "plain": "If you do not know what open source software is in your stack, it is harder to respond to vulnerabilities, answer customer security questions or produce an accurate SBOM. A normal dependency file may only show application libraries. It may not include software inside container images, sidecars added at deployment, deployment tools or managed services.",
       "regulatoryHook": {
         "instrument": "Cyber Resilience Act (CRA)",
         "appliesToRoles": [
@@ -102,7 +102,7 @@
   },
   {
     "areaId": 3,
-    "area": "Policy and Decision-Making",
+    "area": "Open Source Policy and Decisions",
     "lastReviewed": "2026-09-11",
     "understand": {
       "plain": "Consistent, documented OSS adoption decisions protect the organisation from licence conflicts, security risks, and costly reversals when ad hoc choices accumulate over time. Cloud environments add a second route in: components enter through pipeline configuration and infrastructure-as-code modules, not just application dependencies, and those routes usually get less review.",
@@ -208,8 +208,8 @@
   },
   {
     "areaId": 5,
-    "area": "Legal and Licensing Awareness",
-    "lastReviewed": "2026-09-06",
+    "area": "Open Source Licensing",
+    "lastReviewed": "2026-09-11",
     "understand": {
       "plain": "OSS licences carry obligations. Using a GPL-licensed component in a commercial product without understanding the implications can trigger copyleft obligations or breach a customer contract. Base images carry licences too: if you distribute a container built from a base image you did not create, you may be taking on licensing obligations that have never been reviewed.",
       "regulatoryHook": null
@@ -313,10 +313,10 @@
   },
   {
     "areaId": 7,
-    "area": "External Collaboration and Contribution",
+    "area": "Working with Open Source Projects",
     "lastReviewed": "2026-09-11",
     "understand": {
-      "plain": "Unmanaged upstream contributions create intellectual property, licence, and reputational risk. Equally, relying on unmaintained OSS projects without engaging with their communities creates long-term maintenance exposure. Cloud-native teams often carry local changes, such as patched images, forked infrastructure modules and modified pipeline actions; if nobody maintains the link to the upstream project, those changes stay internal and get harder to maintain over time.",
+      "plain": "Contributing code without clear rules can create licence, intellectual property and reputational risks. There is also a maintenance risk when your team changes open source software locally but never contributes those changes back. Over time, your version can become harder to update and maintain.",
       "regulatoryHook": null
     },
     "act": {
