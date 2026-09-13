@@ -14,7 +14,7 @@ let state = {
 
 const STORAGE_KEY = 'oss-governance-diagnostic-v1';
 const TOOL_NAME   = 'Lightweight Open Source Governance Diagnostic';
-const TOOL_VERSION = '2.5';
+const TOOL_VERSION = '2.6';
 
 /* ---- Persistence ---- */
 function saveState() {
