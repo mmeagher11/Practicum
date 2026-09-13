@@ -14,15 +14,17 @@ Existing maturity frameworks (the Linux Foundation five-stage OSPO model, FINOS 
 
 ## What it does
 
-The Diagnostic is a seven-by-five maturity matrix. For each of seven capability areas you name an owner first, note whether the components involved are self-managed or run by a provider, select your current level (1 Unaware to 5 Integrated capability), and record the single most immediate next action:
+The Diagnostic is a seven-by-five maturity matrix. For each capability area you say who is responsible first, then choose the level that best describes where you are today (1 Unaware to 5 Integrated capability) and record one action to take next. Six of the seven areas also ask who is responsible for running the components involved: your organisation, the provider, or both. Regulatory Readiness does not, because which rules apply is a question about the organisation and its products rather than about who operates a component.
 
 1. Internal Ownership (foundational)
 2. Software Visibility (high risk)
-3. Policy and Decision-Making
+3. Open Source Policy and Decisions
 4. Security and Maintenance (high risk)
-5. Legal and Licensing Awareness (high risk)
+5. Open Source Licensing (high risk)
 6. Regulatory Readiness
-7. External Collaboration and Contribution
+7. Working with Open Source Projects
+
+Areas 3, 5 and 7 are shown under plainer names than the capability names used in the dissertation (Policy and Decision-Making, Legal and Licensing Awareness, External Collaboration and Contribution). The tool displays both, so the two can be read together.
 
 The tool shows a live summary of your lowest-scoring and highest-risk areas and your distance from the Level 3 target in Security and Licensing, saves progress locally in your browser, and exports to print/PDF, CSV, and JSON. A remediation layer signposts what to do from your current level, with curated free resources per area, including tooling for generating an SBOM inside a build pipeline and scanning base images.
 
@@ -55,6 +57,7 @@ The tool uses a light visual system: white ground, Brand Green `#64bc46`, Near-B
 
 ## Version history
 
+- **v2.6 (September 2026).** Plain-language rewrite of the on-screen copy, so the tool asks practical questions rather than testing whether the reader knows governance terminology. The maturity model is unchanged: same seven areas, same five level names, same risk ratings, same Level 3 target. Plainer names for Areas 3, 5 and 7 with the dissertation's capability name shown alongside; optional helper text under an area's question; the "who runs these components" question removed from Regulatory Readiness; and a print fix so an area with no level chosen no longer prints an empty guidance heading.
 - **v2.5 (September 2026).** Parity with paper v2.5: cloud-native descriptors in every area (Appendix A), ownership asked before maturity level in each area, a per-area managed / self-managed field (Section 4.3), hosted-product CRA scope in the Regulatory Readiness guidance, base image and pipeline tooling in the resources, the Level 3 target block in the summary, and a new light visual identity (Sora and Inter, self-hosted).
 - **v2.2 (July 2026).** README, user guide, CONTRIBUTING, corrected CRA dates, GitHub Pages workflow.
 - **v1 (June 2026).** Initial release with the v2 remediation layer.
@@ -73,7 +76,7 @@ If the Actions run fails with "Get Pages site failed" or "Resource not accessibl
 
 All assessment content lives in data files, separate from the UI logic:
 
-- `data.js` holds the seven capability areas and the five level descriptors. These mirror Appendix A of the dissertation (v2.2, July 2026) and should not be paraphrased casually; they are the assessed instrument.
+- `data.js` holds the seven capability areas and the five level descriptors. These implement Appendix A of the dissertation, worded in plain language for practitioners, and should not be paraphrased casually; they are the assessed instrument. Three optional fields matter if you edit an area: `formalName` shows the dissertation's capability name alongside a plainer one, `help` adds a line of secondary text under the question, and `delivery: false` removes the "who runs these components" question from an area (used only for Regulatory Readiness).
 - `resources.json` holds the remediation content: the plain-language "understand" notes, the level-specific "act" prompts, the regulatory hooks with their role gating, and the curated "learn" links. Every entry carries a `lastReviewed` date, which the UI displays so staleness is visible.
 
 ## Contributing
